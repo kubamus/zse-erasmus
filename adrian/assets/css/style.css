@@ -1,0 +1,26 @@
+* {
+  margin: 0;
+  padding: 0; }
+  * body {
+    background: #212121;
+    color: #fff;
+    font-family: sans-serif; }
+    * body button {
+      padding: 1em;
+      background: deepskyblue;
+      border-radius: 0.25em;
+      border: none;
+      margin: 1em auto; }
+    * body table {
+      border: 1px solid transparent; }
+      * body table td, * body table th, * body table tr {
+        border-bottom: 1px solid #fff;
+        padding: 1em; }
+        * body table td:hover, * body table th:hover, * body table tr:hover {
+          background: #ddd;
+          color: #212121; }
+  * .container {
+    width: 80vw;
+    margin: 2em auto; }
+
+/*# sourceMappingURL=style.css.map */
