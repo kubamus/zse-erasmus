@@ -1,0 +1,2757 @@
+openapi: 3.1.0
+info:
+  title: TaskFlow API
+  version: 1.0.0
+  summary: Jira/Trello-like project management API (core features, no comments yet)
+  description: >
+    REST API for a collaborative work management app with authentication, user settings,
+    workspaces, boards, lists, cards, labels, checklist items, board memberships, and activity logs.
+    Comments are intentionally excluded in this version.
+
+servers:
+  - url: https://api.taskflow.example.com/v1
+    description: Production
+  - url: https://staging-api.taskflow.example.com/v1
+    description: Staging
+  - url: http://localhost:8080/v1
+    description: Local development
+
+tags:
+  - name: Health
+  - name: Auth
+  - name: Users
+  - name: User Settings
+  - name: Workspaces
+  - name: Boards
+  - name: Board Memberships
+  - name: Lists
+  - name: Cards
+  - name: Labels
+  - name: Checklists
+  - name: Attachments
+  - name: Activity
+
+security:
+  - BearerAuth: []
+
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check
+      operationId: getHealth
+      security: []
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register a new account
+      operationId: register
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTokensResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login with email and password
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTokensResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Refresh access token
+      operationId: refreshToken
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: Token refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTokensResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout current session
+      operationId: logout
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+      responses:
+        '204':
+          description: Logged out
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/password/forgot:
+    post:
+      tags: [Auth]
+      summary: Start password reset
+      operationId: forgotPassword
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+      responses:
+        '202':
+          description: Password reset instructions accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcceptedMessageResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/password/reset:
+    post:
+      tags: [Auth]
+      summary: Reset password with token
+      operationId: resetPassword
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+      responses:
+        '200':
+          description: Password reset successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /users/me:
+    get:
+      tags: [Users]
+      summary: Get current user profile
+      operationId: getCurrentUser
+      responses:
+        '200':
+          description: Current user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags: [Users]
+      summary: Update current user profile
+      operationId: updateCurrentUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: User profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /users/me/avatar:
+    put:
+      tags: [Users]
+      summary: Upload/replace avatar (URL-based metadata only)
+      operationId: updateAvatar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAvatarRequest'
+      responses:
+        '200':
+          description: Avatar updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '413':
+          $ref: '#/components/responses/PayloadTooLarge'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags: [Users]
+      summary: Remove avatar
+      operationId: removeAvatar
+      responses:
+        '204':
+          description: Avatar removed
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /user-settings:
+    get:
+      tags: [User Settings]
+      summary: Get current user settings
+      operationId: getUserSettings
+      responses:
+        '200':
+          description: User settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSettingsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags: [User Settings]
+      summary: Update current user settings
+      operationId: updateUserSettings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserSettingsRequest'
+      responses:
+        '200':
+          description: User settings updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSettingsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /workspaces:
+    get:
+      tags: [Workspaces]
+      summary: List workspaces visible to current user
+      operationId: listWorkspaces
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/cursorParam'
+      responses:
+        '200':
+          description: Workspace list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedWorkspaceResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags: [Workspaces]
+      summary: Create workspace
+      operationId: createWorkspace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkspaceRequest'
+      responses:
+        '201':
+          description: Workspace created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /workspaces/{workspaceId}:
+    get:
+      tags: [Workspaces]
+      summary: Get workspace
+      operationId: getWorkspace
+      parameters:
+        - $ref: '#/components/parameters/workspaceId'
+      responses:
+        '200':
+          description: Workspace
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags: [Workspaces]
+      summary: Update workspace
+      operationId: updateWorkspace
+      parameters:
+        - $ref: '#/components/parameters/workspaceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateWorkspaceRequest'
+      responses:
+        '200':
+          description: Workspace updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags: [Workspaces]
+      summary: Delete workspace
+      operationId: deleteWorkspace
+      parameters:
+        - $ref: '#/components/parameters/workspaceId'
+      responses:
+        '204':
+          description: Workspace deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /boards:
+    get:
+      tags: [Boards]
+      summary: List boards visible to current user
+      operationId: listBoards
+      parameters:
+        - in: query
+          name: workspaceId
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: visibility
+          schema:
+            $ref: '#/components/schemas/BoardVisibility'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/cursorParam'
+      responses:
+        '200':
+          description: Board list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedBoardResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags: [Boards]
+      summary: Create board
+      operationId: createBoard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBoardRequest'
+      responses:
+        '201':
+          description: Board created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoardResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /boards/{boardId}:
+    get:
+      tags: [Boards]
+      summary: Get board
+      operationId: getBoard
+      parameters:
+        - $ref: '#/components/parameters/boardId'
+      responses:
+        '200':
+          description: Board
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoardResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags: [Boards]
+      summary: Update board
+      operationId: updateBoard
+      parameters:
+        - $ref: '#/components/parameters/boardId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBoardRequest'
+      responses:
+        '200':
+          description: Board updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoardResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags: [Boards]
+      summary: Archive board (soft delete)
+      operationId: archiveBoard
+      parameters:
+        - $ref: '#/components/parameters/boardId'
+      responses:
+        '204':
+          description: Board archived
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /boards/{boardId}/memberships:
+    get:
+      tags: [Board Memberships]
+      summary: List board memberships
+      operationId: listBoardMemberships
+      parameters:
+        - $ref: '#/components/parameters/boardId'
+      responses:
+        '200':
+          description: Board memberships
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoardMembershipListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags: [Board Memberships]
+      summary: Add member to board
+      operationId: addBoardMember
+      parameters:
+        - $ref: '#/components/parameters/boardId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddBoardMemberRequest'
+      responses:
+        '201':
+          description: Member added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoardMembershipResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /boards/{boardId}/memberships/{membershipId}:
+    patch:
+      tags: [Board Memberships]
+      summary: Update board membership role
+      operationId: updateBoardMembership
+      parameters:
+        - $ref: '#/components/parameters/boardId'
+        - $ref: '#/components/parameters/membershipId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBoardMembershipRequest'
+      responses:
+        '200':
+          description: Membership updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoardMembershipResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags: [Board Memberships]
+      summary: Remove board member
+      operationId: removeBoardMember
+      parameters:
+        - $ref: '#/components/parameters/boardId'
+        - $ref: '#/components/parameters/membershipId'
+      responses:
+        '204':
+          description: Membership removed
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /boards/{boardId}/labels:
+    get:
+      tags: [Labels]
+      summary: List labels in board
+      operationId: listLabels
+      parameters:
+        - $ref: '#/components/parameters/boardId'
+      responses:
+        '200':
+          description: Labels list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabelListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags: [Labels]
+      summary: Create label
+      operationId: createLabel
+      parameters:
+        - $ref: '#/components/parameters/boardId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLabelRequest'
+      responses:
+        '201':
+          description: Label created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabelResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /boards/{boardId}/labels/{labelId}:
+    patch:
+      tags: [Labels]
+      summary: Update label
+      operationId: updateLabel
+      parameters:
+        - $ref: '#/components/parameters/boardId'
+        - $ref: '#/components/parameters/labelId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLabelRequest'
+      responses:
+        '200':
+          description: Label updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabelResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags: [Labels]
+      summary: Delete label
+      operationId: deleteLabel
+      parameters:
+        - $ref: '#/components/parameters/boardId'
+        - $ref: '#/components/parameters/labelId'
+      responses:
+        '204':
+          description: Label deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /boards/{boardId}/lists:
+    get:
+      tags: [Lists]
+      summary: List board lists (ordered)
+      operationId: listLists
+      parameters:
+        - $ref: '#/components/parameters/boardId'
+      responses:
+        '200':
+          description: List collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags: [Lists]
+      summary: Create list in board
+      operationId: createList
+      parameters:
+        - $ref: '#/components/parameters/boardId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateListRequest'
+      responses:
+        '201':
+          description: List created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /boards/{boardId}/lists/reorder:
+    post:
+      tags: [Lists]
+      summary: Reorder lists within board
+      operationId: reorderLists
+      parameters:
+        - $ref: '#/components/parameters/boardId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReorderListsRequest'
+      responses:
+        '200':
+          description: Lists reordered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListListResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /lists/{listId}:
+    get:
+      tags: [Lists]
+      summary: Get list
+      operationId: getList
+      parameters:
+        - $ref: '#/components/parameters/listId'
+      responses:
+        '200':
+          description: List
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags: [Lists]
+      summary: Update list
+      operationId: updateList
+      parameters:
+        - $ref: '#/components/parameters/listId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateListRequest'
+      responses:
+        '200':
+          description: List updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags: [Lists]
+      summary: Archive list
+      operationId: archiveList
+      parameters:
+        - $ref: '#/components/parameters/listId'
+      responses:
+        '204':
+          description: List archived
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /lists/{listId}/cards:
+    get:
+      tags: [Cards]
+      summary: List cards in a list
+      operationId: listCards
+      parameters:
+        - $ref: '#/components/parameters/listId'
+        - in: query
+          name: includeArchived
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Card list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags: [Cards]
+      summary: Create card
+      operationId: createCard
+      parameters:
+        - $ref: '#/components/parameters/listId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCardRequest'
+      responses:
+        '201':
+          description: Card created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '413':
+          $ref: '#/components/responses/PayloadTooLarge'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /cards/{cardId}:
+    get:
+      tags: [Cards]
+      summary: Get card
+      operationId: getCard
+      parameters:
+        - $ref: '#/components/parameters/cardId'
+      responses:
+        '200':
+          description: Card
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags: [Cards]
+      summary: Update card
+      operationId: updateCard
+      parameters:
+        - $ref: '#/components/parameters/cardId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCardRequest'
+      responses:
+        '200':
+          description: Card updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '413':
+          $ref: '#/components/responses/PayloadTooLarge'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags: [Cards]
+      summary: Archive card
+      operationId: archiveCard
+      parameters:
+        - $ref: '#/components/parameters/cardId'
+      responses:
+        '204':
+          description: Card archived
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /cards/{cardId}/move:
+    post:
+      tags: [Cards]
+      summary: Move card to another list/position
+      operationId: moveCard
+      parameters:
+        - $ref: '#/components/parameters/cardId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveCardRequest'
+      responses:
+        '200':
+          description: Card moved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /cards/{cardId}/assignees:
+    post:
+      tags: [Cards]
+      summary: Add assignee to card
+      operationId: addCardAssignee
+      parameters:
+        - $ref: '#/components/parameters/cardId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddCardAssigneeRequest'
+      responses:
+        '201':
+          description: Assignee added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /cards/{cardId}/assignees/{userId}:
+    delete:
+      tags: [Cards]
+      summary: Remove assignee from card
+      operationId: removeCardAssignee
+      parameters:
+        - $ref: '#/components/parameters/cardId'
+        - $ref: '#/components/parameters/userId'
+      responses:
+        '204':
+          description: Assignee removed
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /cards/{cardId}/labels:
+    post:
+      tags: [Cards]
+      summary: Attach label to card
+      operationId: attachLabelToCard
+      parameters:
+        - $ref: '#/components/parameters/cardId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttachLabelRequest'
+      responses:
+        '201':
+          description: Label attached
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /cards/{cardId}/labels/{labelId}:
+    delete:
+      tags: [Cards]
+      summary: Detach label from card
+      operationId: detachLabelFromCard
+      parameters:
+        - $ref: '#/components/parameters/cardId'
+        - $ref: '#/components/parameters/labelId'
+      responses:
+        '204':
+          description: Label detached
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /cards/{cardId}/checklists:
+    get:
+      tags: [Checklists]
+      summary: List checklist items on card
+      operationId: listChecklistItems
+      parameters:
+        - $ref: '#/components/parameters/cardId'
+      responses:
+        '200':
+          description: Checklist items
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChecklistItemListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags: [Checklists]
+      summary: Add checklist item to card
+      operationId: createChecklistItem
+      parameters:
+        - $ref: '#/components/parameters/cardId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateChecklistItemRequest'
+      responses:
+        '201':
+          description: Checklist item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChecklistItemResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /checklists/{checklistItemId}:
+    patch:
+      tags: [Checklists]
+      summary: Update checklist item
+      operationId: updateChecklistItem
+      parameters:
+        - $ref: '#/components/parameters/checklistItemId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateChecklistItemRequest'
+      responses:
+        '200':
+          description: Checklist item updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChecklistItemResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags: [Checklists]
+      summary: Delete checklist item
+      operationId: deleteChecklistItem
+      parameters:
+        - $ref: '#/components/parameters/checklistItemId'
+      responses:
+        '204':
+          description: Checklist item deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /cards/{cardId}/attachments:
+    get:
+      tags: [Attachments]
+      summary: List attachment metadata for card
+      operationId: listAttachments
+      parameters:
+        - $ref: '#/components/parameters/cardId'
+      responses:
+        '200':
+          description: Attachments list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttachmentListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags: [Attachments]
+      summary: Add attachment metadata to card
+      description: This API stores metadata (name, mimeType, URL, size). Binary upload can be added later.
+      operationId: createAttachment
+      parameters:
+        - $ref: '#/components/parameters/cardId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAttachmentRequest'
+      responses:
+        '201':
+          description: Attachment metadata created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttachmentResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '413':
+          $ref: '#/components/responses/PayloadTooLarge'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /attachments/{attachmentId}:
+    delete:
+      tags: [Attachments]
+      summary: Delete attachment metadata
+      operationId: deleteAttachment
+      parameters:
+        - $ref: '#/components/parameters/attachmentId'
+      responses:
+        '204':
+          description: Attachment deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /boards/{boardId}/activity:
+    get:
+      tags: [Activity]
+      summary: List board activity log
+      operationId: listBoardActivity
+      parameters:
+        - $ref: '#/components/parameters/boardId'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/cursorParam'
+      responses:
+        '200':
+          description: Activity events
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedActivityResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    workspaceId:
+      name: workspaceId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    boardId:
+      name: boardId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    listId:
+      name: listId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    cardId:
+      name: cardId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    labelId:
+      name: labelId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    checklistItemId:
+      name: checklistItemId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    membershipId:
+      name: membershipId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    attachmentId:
+      name: attachmentId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    userId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    limitParam:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    cursorParam:
+      name: cursor
+      in: query
+      schema:
+        type: string
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          examples:
+            badRequest:
+              value:
+                error:
+                  code: BAD_REQUEST
+                  message: Request validation failed.
+                  details:
+                    - field: email
+                      reason: Invalid format.
+                requestId: "3ccf4f7f-5a0a-4a6d-9f6d-50f7fd77cb9f"
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          examples:
+            unauthorized:
+              value:
+                error:
+                  code: UNAUTHORIZED
+                  message: Missing or invalid authentication token.
+                requestId: "10a4d8bc-d68f-4a3a-9d6e-65f81f9b18cb"
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          examples:
+            forbidden:
+              value:
+                error:
+                  code: FORBIDDEN
+                  message: You do not have permission to perform this action.
+                requestId: "f1a379d8-e4cc-46d5-af7d-fb8ec6d70f79"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          examples:
+            notFound:
+              value:
+                error:
+                  code: NOT_FOUND
+                  message: Resource not found.
+                requestId: "7419f3f3-3890-4489-af20-5079a9f13e20"
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          examples:
+            conflict:
+              value:
+                error:
+                  code: CONFLICT
+                  message: The resource is in a conflicting state.
+                requestId: "bc3b83a7-f8fb-44bc-a25f-a39f16dd7a77"
+    PayloadTooLarge:
+      description: Payload too large
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          examples:
+            tooLarge:
+              value:
+                error:
+                  code: PAYLOAD_TOO_LARGE
+                  message: Payload exceeds allowed size.
+                requestId: "f8147e2e-90c2-43ea-a007-c6f5f32fbb91"
+    UnsupportedMediaType:
+      description: Unsupported media type
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          examples:
+            unsupportedMediaType:
+              value:
+                error:
+                  code: UNSUPPORTED_MEDIA_TYPE
+                  message: Content type is not supported.
+                requestId: "1719a63f-82ed-4558-879f-1a6c1bfddb53"
+    UnprocessableEntity:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          examples:
+            unprocessable:
+              value:
+                error:
+                  code: UNPROCESSABLE_ENTITY
+                  message: One or more fields are invalid.
+                  details:
+                    - field: password
+                      reason: Must contain at least one special character.
+                requestId: "e856e4f6-2cf8-40f0-b993-cc1fa57f0a08"
+    TooManyRequests:
+      description: Too many requests
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+          description: Number of seconds to wait before retrying.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          examples:
+            rateLimited:
+              value:
+                error:
+                  code: TOO_MANY_REQUESTS
+                  message: Rate limit exceeded.
+                requestId: "8eb3f1ca-bdb2-4c54-a489-d24316b8f0da"
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          examples:
+            internal:
+              value:
+                error:
+                  code: INTERNAL_SERVER_ERROR
+                  message: Unexpected server error.
+                requestId: "21434d16-13a7-4f06-b5de-f7427bcebc3f"
+    ServiceUnavailable:
+      description: Service unavailable
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          examples:
+            unavailable:
+              value:
+                error:
+                  code: SERVICE_UNAVAILABLE
+                  message: Service temporarily unavailable.
+                requestId: "c5613dde-5379-447a-a53b-a23284c9f9e9"
+
+  schemas:
+    # ---- Core primitives ----
+    UUID:
+      type: string
+      format: uuid
+
+    Timestamp:
+      type: string
+      format: date-time
+
+    ErrorFieldDetail:
+      type: object
+      additionalProperties: false
+      properties:
+        field:
+          type: string
+        reason:
+          type: string
+      required: [field, reason]
+
+    ErrorBody:
+      type: object
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+          examples: [BAD_REQUEST, UNAUTHORIZED, FORBIDDEN, NOT_FOUND, CONFLICT, INTERNAL_SERVER_ERROR]
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorFieldDetail'
+      required: [code, message]
+
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorBody'
+        requestId:
+          type: string
+      required: [error, requestId]
+
+    MessageResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        message:
+          type: string
+      required: [message]
+
+    AcceptedMessageResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        message:
+          type: string
+        accepted:
+          type: boolean
+          const: true
+      required: [message, accepted]
+
+    HealthResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        timestamp:
+          $ref: '#/components/schemas/Timestamp'
+        version:
+          type: string
+      required: [status, timestamp, version]
+
+    PaginationMeta:
+      type: object
+      additionalProperties: false
+      properties:
+        nextCursor:
+          type: string
+          nullable: true
+        hasMore:
+          type: boolean
+      required: [nextCursor, hasMore]
+
+    # ---- Enums ----
+    Theme:
+      type: string
+      enum: [light, dark, system]
+
+    Locale:
+      type: string
+      examples: [en-US, en-GB, de-DE]
+
+    DateFormat:
+      type: string
+      enum: [YYYY-MM-DD, DD-MM-YYYY, MM-DD-YYYY]
+
+    TimeFormat:
+      type: string
+      enum: [h12, h24]
+
+    BoardVisibility:
+      type: string
+      enum: [private, workspace, public]
+
+    WorkspaceRole:
+      type: string
+      enum: [owner, admin, member]
+
+    BoardRole:
+      type: string
+      enum: [admin, member, observer]
+
+    CardPriority:
+      type: string
+      enum: [low, medium, high, urgent]
+
+    ActivityAction:
+      type: string
+      enum:
+        - workspace.created
+        - workspace.updated
+        - board.created
+        - board.updated
+        - list.created
+        - list.updated
+        - card.created
+        - card.updated
+        - card.moved
+        - card.archived
+        - label.created
+        - checklist.created
+        - checklist.updated
+        - attachment.created
+        - membership.added
+        - membership.updated
+        - membership.removed
+
+    # ---- Auth ----
+    RegisterRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        password:
+          type: string
+          minLength: 8
+          maxLength: 128
+        fullName:
+          type: string
+          minLength: 1
+          maxLength: 120
+      required: [email, password, fullName]
+
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+          maxLength: 128
+      required: [email, password]
+
+    RefreshTokenRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        refreshToken:
+          type: string
+          minLength: 20
+      required: [refreshToken]
+
+    LogoutRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        refreshToken:
+          type: string
+          minLength: 20
+
+    ForgotPasswordRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          format: email
+      required: [email]
+
+    ResetPasswordRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        token:
+          type: string
+        newPassword:
+          type: string
+          minLength: 8
+          maxLength: 128
+      required: [token, newPassword]
+
+    AuthTokenPayload:
+      type: object
+      additionalProperties: false
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        tokenType:
+          type: string
+          enum: [Bearer]
+        expiresIn:
+          type: integer
+          description: Access token expiry in seconds
+          minimum: 1
+      required: [accessToken, refreshToken, tokenType, expiresIn]
+
+    AuthTokensResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/AuthTokenPayload'
+      required: [data]
+
+    # ---- User / Settings ----
+    User:
+      type: object
+      additionalProperties: false
+      properties:
+        id: { $ref: '#/components/schemas/UUID' }
+        email:
+          type: string
+          format: email
+        fullName:
+          type: string
+        avatarUrl:
+          type: string
+          format: uri
+          nullable: true
+        timezone:
+          type: string
+          examples: [UTC, America/New_York]
+        createdAt: { $ref: '#/components/schemas/Timestamp' }
+        updatedAt: { $ref: '#/components/schemas/Timestamp' }
+      required: [id, email, fullName, avatarUrl, timezone, createdAt, updatedAt]
+
+    UserResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/User'
+      required: [data]
+
+    UpdateUserRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        fullName:
+          type: string
+          minLength: 1
+          maxLength: 120
+        timezone:
+          type: string
+          maxLength: 64
+      minProperties: 1
+
+    UpdateAvatarRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        avatarUrl:
+          type: string
+          format: uri
+      required: [avatarUrl]
+
+    UserSettings:
+      type: object
+      additionalProperties: false
+      properties:
+        userId: { $ref: '#/components/schemas/UUID' }
+        theme: { $ref: '#/components/schemas/Theme' }
+        locale: { $ref: '#/components/schemas/Locale' }
+        dateFormat: { $ref: '#/components/schemas/DateFormat' }
+        timeFormat: { $ref: '#/components/schemas/TimeFormat' }
+        emailNotifications:
+          type: boolean
+        pushNotifications:
+          type: boolean
+        compactMode:
+          type: boolean
+        startOfWeek:
+          type: string
+          enum: [monday, sunday]
+        updatedAt: { $ref: '#/components/schemas/Timestamp' }
+      required:
+        - userId
+        - theme
+        - locale
+        - dateFormat
+        - timeFormat
+        - emailNotifications
+        - pushNotifications
+        - compactMode
+        - startOfWeek
+        - updatedAt
+
+    UserSettingsResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/UserSettings'
+      required: [data]
+
+    UpdateUserSettingsRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        theme: { $ref: '#/components/schemas/Theme' }
+        locale: { $ref: '#/components/schemas/Locale' }
+        dateFormat: { $ref: '#/components/schemas/DateFormat' }
+        timeFormat: { $ref: '#/components/schemas/TimeFormat' }
+        emailNotifications:
+          type: boolean
+        pushNotifications:
+          type: boolean
+        compactMode:
+          type: boolean
+        startOfWeek:
+          type: string
+          enum: [monday, sunday]
+      minProperties: 1
+
+    # ---- Workspace ----
+    Workspace:
+      type: object
+      additionalProperties: false
+      properties:
+        id: { $ref: '#/components/schemas/UUID' }
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        slug:
+          type: string
+          pattern: '^[a-z0-9-]{3,50}$'
+        description:
+          type: string
+          maxLength: 1000
+          nullable: true
+        createdBy: { $ref: '#/components/schemas/UUID' }
+        createdAt: { $ref: '#/components/schemas/Timestamp' }
+        updatedAt: { $ref: '#/components/schemas/Timestamp' }
+      required: [id, name, slug, description, createdBy, createdAt, updatedAt]
+
+    WorkspaceResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Workspace'
+      required: [data]
+
+    PaginatedWorkspaceResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Workspace'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+      required: [data, meta]
+
+    CreateWorkspaceRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        slug:
+          type: string
+          pattern: '^[a-z0-9-]{3,50}$'
+        description:
+          type: string
+          maxLength: 1000
+      required: [name, slug]
+
+    UpdateWorkspaceRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 1000
+      minProperties: 1
+
+    # ---- Boards ----
+    Board:
+      type: object
+      additionalProperties: false
+      properties:
+        id: { $ref: '#/components/schemas/UUID' }
+        workspaceId: { $ref: '#/components/schemas/UUID' }
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        key:
+          type: string
+          pattern: '^[A-Z][A-Z0-9_]{1,9}$'
+          nullable: true
+          description: Optional project-like key (Jira style)
+        description:
+          type: string
+          maxLength: 2000
+          nullable: true
+        visibility:
+          $ref: '#/components/schemas/BoardVisibility'
+        color:
+          type: string
+          pattern: '^#([A-Fa-f0-9]{6})$'
+          nullable: true
+        archived:
+          type: boolean
+        createdBy: { $ref: '#/components/schemas/UUID' }
+        createdAt: { $ref: '#/components/schemas/Timestamp' }
+        updatedAt: { $ref: '#/components/schemas/Timestamp' }
+      required:
+        - id
+        - workspaceId
+        - name
+        - key
+        - description
+        - visibility
+        - color
+        - archived
+        - createdBy
+        - createdAt
+        - updatedAt
+
+    BoardResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Board'
+      required: [data]
+
+    PaginatedBoardResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Board'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+      required: [data, meta]
+
+    CreateBoardRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        workspaceId: { $ref: '#/components/schemas/UUID' }
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        key:
+          type: string
+          pattern: '^[A-Z][A-Z0-9_]{1,9}$'
+        description:
+          type: string
+          maxLength: 2000
+        visibility:
+          $ref: '#/components/schemas/BoardVisibility'
+        color:
+          type: string
+          pattern: '^#([A-Fa-f0-9]{6})$'
+      required: [workspaceId, name]
+
+    UpdateBoardRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        key:
+          type: string
+          pattern: '^[A-Z][A-Z0-9_]{1,9}$'
+        description:
+          type: string
+          maxLength: 2000
+        visibility:
+          $ref: '#/components/schemas/BoardVisibility'
+        color:
+          type: string
+          pattern: '^#([A-Fa-f0-9]{6})$'
+      minProperties: 1
+
+    # ---- Memberships ----
+    BoardMembership:
+      type: object
+      additionalProperties: false
+      properties:
+        id: { $ref: '#/components/schemas/UUID' }
+        boardId: { $ref: '#/components/schemas/UUID' }
+        userId: { $ref: '#/components/schemas/UUID' }
+        role:
+          $ref: '#/components/schemas/BoardRole'
+        createdAt: { $ref: '#/components/schemas/Timestamp' }
+      required: [id, boardId, userId, role, createdAt]
+
+    BoardMembershipResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/BoardMembership'
+      required: [data]
+
+    BoardMembershipListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoardMembership'
+      required: [data]
+
+    AddBoardMemberRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        userId: { $ref: '#/components/schemas/UUID' }
+        role:
+          $ref: '#/components/schemas/BoardRole'
+      required: [userId]
+
+    UpdateBoardMembershipRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        role:
+          $ref: '#/components/schemas/BoardRole'
+      required: [role]
+
+    # ---- Lists ----
+    List:
+      type: object
+      additionalProperties: false
+      properties:
+        id: { $ref: '#/components/schemas/UUID' }
+        boardId: { $ref: '#/components/schemas/UUID' }
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        position:
+          type: number
+          format: float
+        archived:
+          type: boolean
+        createdAt: { $ref: '#/components/schemas/Timestamp' }
+        updatedAt: { $ref: '#/components/schemas/Timestamp' }
+      required: [id, boardId, name, position, archived, createdAt, updatedAt]
+
+    ListResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/List'
+      required: [data]
+
+    ListListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/List'
+      required: [data]
+
+    CreateListRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        position:
+          type: number
+          format: float
+          nullable: true
+      required: [name]
+
+    UpdateListRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        position:
+          type: number
+          format: float
+      minProperties: 1
+
+    ReorderListsRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        orderedListIds:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/UUID'
+      required: [orderedListIds]
+
+    # ---- Labels ----
+    Label:
+      type: object
+      additionalProperties: false
+      properties:
+        id: { $ref: '#/components/schemas/UUID' }
+        boardId: { $ref: '#/components/schemas/UUID' }
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+        color:
+          type: string
+          pattern: '^#([A-Fa-f0-9]{6})$'
+        createdAt: { $ref: '#/components/schemas/Timestamp' }
+        updatedAt: { $ref: '#/components/schemas/Timestamp' }
+      required: [id, boardId, name, color, createdAt, updatedAt]
+
+    LabelResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Label'
+      required: [data]
+
+    LabelListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Label'
+      required: [data]
+
+    CreateLabelRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+        color:
+          type: string
+          pattern: '^#([A-Fa-f0-9]{6})$'
+      required: [name, color]
+
+    UpdateLabelRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+        color:
+          type: string
+          pattern: '^#([A-Fa-f0-9]{6})$'
+      minProperties: 1
+
+    # ---- Cards ----
+    Card:
+      type: object
+      additionalProperties: false
+      properties:
+        id: { $ref: '#/components/schemas/UUID' }
+        boardId: { $ref: '#/components/schemas/UUID' }
+        listId: { $ref: '#/components/schemas/UUID' }
+        title:
+          type: string
+          minLength: 1
+          maxLength: 300
+        description:
+          type: string
+          maxLength: 10000
+          nullable: true
+        position:
+          type: number
+          format: float
+        dueDate:
+          type: string
+          format: date-time
+          nullable: true
+        startDate:
+          type: string
+          format: date-time
+          nullable: true
+        priority:
+          $ref: '#/components/schemas/CardPriority'
+        archived:
+          type: boolean
+        completed:
+          type: boolean
+        assigneeIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/UUID'
+        labelIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/UUID'
+        attachmentCount:
+          type: integer
+          minimum: 0
+        checklistProgress:
+          type: object
+          additionalProperties: false
+          properties:
+            total:
+              type: integer
+              minimum: 0
+            done:
+              type: integer
+              minimum: 0
+          required: [total, done]
+        createdBy: { $ref: '#/components/schemas/UUID' }
+        createdAt: { $ref: '#/components/schemas/Timestamp' }
+        updatedAt: { $ref: '#/components/schemas/Timestamp' }
+      required:
+        - id
+        - boardId
+        - listId
+        - title
+        - description
+        - position
+        - dueDate
+        - startDate
+        - priority
+        - archived
+        - completed
+        - assigneeIds
+        - labelIds
+        - attachmentCount
+        - checklistProgress
+        - createdBy
+        - createdAt
+        - updatedAt
+
+    CardResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Card'
+      required: [data]
+
+    CardListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Card'
+      required: [data]
+
+    CreateCardRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 300
+        description:
+          type: string
+          maxLength: 10000
+        dueDate:
+          type: string
+          format: date-time
+        startDate:
+          type: string
+          format: date-time
+        priority:
+          $ref: '#/components/schemas/CardPriority'
+        assigneeIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/UUID'
+        labelIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/UUID'
+        position:
+          type: number
+          format: float
+      required: [title]
+
+    UpdateCardRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 300
+        description:
+          type: string
+          maxLength: 10000
+          nullable: true
+        dueDate:
+          type: string
+          format: date-time
+          nullable: true
+        startDate:
+          type: string
+          format: date-time
+          nullable: true
+        priority:
+          $ref: '#/components/schemas/CardPriority'
+        completed:
+          type: boolean
+        archived:
+          type: boolean
+      minProperties: 1
+
+    MoveCardRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        targetListId: { $ref: '#/components/schemas/UUID' }
+        position:
+          type: number
+          format: float
+      required: [targetListId]
+
+    AddCardAssigneeRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        userId: { $ref: '#/components/schemas/UUID' }
+      required: [userId]
+
+    AttachLabelRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        labelId: { $ref: '#/components/schemas/UUID' }
+      required: [labelId]
+
+    # ---- Checklists ----
+    ChecklistItem:
+      type: object
+      additionalProperties: false
+      properties:
+        id: { $ref: '#/components/schemas/UUID' }
+        cardId: { $ref: '#/components/schemas/UUID' }
+        text:
+          type: string
+          minLength: 1
+          maxLength: 500
+        isDone:
+          type: boolean
+        position:
+          type: number
+          format: float
+        createdAt: { $ref: '#/components/schemas/Timestamp' }
+        updatedAt: { $ref: '#/components/schemas/Timestamp' }
+      required: [id, cardId, text, isDone, position, createdAt, updatedAt]
+
+    ChecklistItemResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ChecklistItem'
+      required: [data]
+
+    ChecklistItemListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChecklistItem'
+      required: [data]
+
+    CreateChecklistItemRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 500
+        position:
+          type: number
+          format: float
+      required: [text]
+
+    UpdateChecklistItemRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 500
+        isDone:
+          type: boolean
+        position:
+          type: number
+          format: float
+      minProperties: 1
+
+    # ---- Attachments ----
+    Attachment:
+      type: object
+      additionalProperties: false
+      properties:
+        id: { $ref: '#/components/schemas/UUID' }
+        cardId: { $ref: '#/components/schemas/UUID' }
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        url:
+          type: string
+          format: uri
+        mimeType:
+          type: string
+          maxLength: 150
+        sizeBytes:
+          type: integer
+          minimum: 0
+        uploadedBy: { $ref: '#/components/schemas/UUID' }
+        createdAt: { $ref: '#/components/schemas/Timestamp' }
+      required: [id, cardId, name, url, mimeType, sizeBytes, uploadedBy, createdAt]
+
+    AttachmentResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Attachment'
+      required: [data]
+
+    AttachmentListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+      required: [data]
+
+    CreateAttachmentRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        url:
+          type: string
+          format: uri
+        mimeType:
+          type: string
+          maxLength: 150
+        sizeBytes:
+          type: integer
+          minimum: 0
+      required: [name, url, mimeType, sizeBytes]
+
+    # ---- Activity ----
+    ActivityEvent:
+      type: object
+      additionalProperties: false
+      properties:
+        id: { $ref: '#/components/schemas/UUID' }
+        boardId: { $ref: '#/components/schemas/UUID' }
+        actorUserId: { $ref: '#/components/schemas/UUID' }
+        action:
+          $ref: '#/components/schemas/ActivityAction'
+        entityType:
+          type: string
+          enum: [workspace, board, list, card, label, checklist_item, attachment, membership]
+        entityId: { $ref: '#/components/schemas/UUID' }
+        metadata:
+          type: object
+          additionalProperties: true
+        createdAt: { $ref: '#/components/schemas/Timestamp' }
+      required: [id, boardId, actorUserId, action, entityType, entityId, metadata, createdAt]
+
+    PaginatedActivityResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityEvent'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+      required: [data, meta]
