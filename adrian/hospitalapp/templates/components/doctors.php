@@ -55,7 +55,7 @@
     ?>
     <div id="no-results"></div>
     <table class="table">
-        <thead>...</thead>
+        <thead></thead>
         <tbody id="doctorResults">
 
         </tbody>

@@ -20,7 +20,7 @@ if (!empty($search)) {
 
         $stmt->execute(['query' => $search . '*']);
 
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $results = $stmt->fetchAll(PDO::FETCH_OBJ);
 
         if ($results) {
             foreach ($results as $row) {
@@ -28,13 +28,13 @@ if (!empty($search)) {
                         <td>
                             <a href='#'>Editar</a> <a href='#'>Copiar</a> <a href='#'>Borrar</a>
                         </td>
-                        <td>{$row['id']}</td>
-                        <td>{$row['name']}</td>
-                        <td>{$row['lastname']}</td>
-                        <td>{$row['phone_number']}</td>
-                        <td>{$row['departments_id']}</td>
-                        <td>{$row['specializations_id']}</td>
-                        <td>{$row['created_at']}</td>
+                        <td>{$row->id}</td>
+                        <td>{$row->name}</td>
+                        <td>{$row->lastname}</td>
+                        <td>{$row->phone_number}</td>
+                        <td>{$row->departments_id}</td>
+                        <td>{$row->specializations_id}</td>
+                        <td>{$row->created_at}</td>
                       </tr>";
             }
         } else {
