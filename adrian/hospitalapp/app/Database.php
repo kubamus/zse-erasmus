@@ -1,5 +1,9 @@
 <?php
 
+namespace app;
+use PDO;
+use PDOException;
+
 class Database {
 
     private $host;
@@ -13,6 +17,7 @@ class Database {
         $this->user = "testing";
         $this->pass = "testing";
         $this->db = "hospital";
+
     }
 
     public function getConnection() {

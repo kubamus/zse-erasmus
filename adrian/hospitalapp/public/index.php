@@ -1,1 +1,1 @@
-<?php
+this is the public folder index

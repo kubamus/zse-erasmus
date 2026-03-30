@@ -1,17 +1,9 @@
 <?php
-    include_once('./templates/header.php');
-    include_once('./templates/components/navigation.php');
-    include_once ("./database/Database.php");
-?>
 
-    <main  class="container my-4  mx-auto d-flex justify-content-center align-items-center">
-        <?php
-            include_once('./templates/components/doctors.php');
-        ?>
+use App\Controllers\RouterController;
 
-    </main>
+include_once "app/Controllers/RouterController.php";
 
+$route = $_GET['route'] ?? 'doctors';
 
-
-
-<?php  include_once('./templates/footer.php'); ?>
+$router = new RouterController($route);
