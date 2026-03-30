@@ -1,26 +1,52 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ink-1: #1f1b18;
+  --ink-2: #574d45;
+  --paper: #f8f4ef;
+  --paper-strong: #efe7de;
+  --accent-1: #c7522a;
+  --accent-2: #2f7f6a;
+  --line: rgba(31, 27, 24, 0.14);
+  --glow: rgba(199, 82, 42, 0.2);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--ink-1);
+  font-family: var(--font-body), sans-serif;
+  background:
+    radial-gradient(1000px 420px at 100% -5%, var(--glow), transparent 55%),
+    radial-gradient(900px 320px at -10% 100%, rgba(47, 127, 106, 0.16), transparent 50%),
+    linear-gradient(180deg, var(--paper), var(--paper-strong));
+  min-height: 100%;
+}
+
+.grain {
+  position: relative;
+}
+
+.grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.2;
+  background-image: radial-gradient(var(--line) 0.6px, transparent 0.6px);
+  background-size: 3px 3px;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 70px rgba(31, 27, 24, 0.08);
+  backdrop-filter: blur(6px);
+}
+
+.title-display {
+  font-family: var(--font-display), sans-serif;
+  letter-spacing: -0.02em;
 }
