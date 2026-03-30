@@ -1,4 +1,5 @@
 import {
+  boolean,
   index,
   mysqlEnum,
   mysqlTable,
@@ -21,6 +22,8 @@ export const boardsTable = mysqlTable(
       .references(() => projectsTable.id, { onDelete: "cascade" }),
     name: varchar("name", { length: 120 }).notNull(),
     type: mysqlEnum("type", boardTypeValues).notNull(),
+    isArchived: boolean("is_archived").default(false).notNull(),
+    archivedAt: timestamp("archived_at", { fsp: 3 }),
     createdAt: timestamp("created_at", { fsp: 3 }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { fsp: 3 })
       .defaultNow()

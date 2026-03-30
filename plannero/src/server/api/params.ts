@@ -10,3 +10,22 @@ export function parseUuidParam(value: string | undefined, paramName: string) {
 
   return value;
 }
+
+export function parseLimitParam(
+  value: string | null,
+  defaultValue: number,
+  min: number,
+  max: number,
+) {
+  if (!value) {
+    return defaultValue;
+  }
+
+  const parsed = Number(value);
+
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    throw badRequest("Invalid limit");
+  }
+
+  return parsed;
+}
