@@ -1,6 +1,6 @@
 <?php
     if (!isset($conn) || !($conn instanceof PDO)) {
-        include_once(__DIR__ . '/../../database/Database.php');
+        include_once(dirname(__DIR__, 3) . '/database/Database.php');
         $conn = (new Database())->connect();
     }
 
