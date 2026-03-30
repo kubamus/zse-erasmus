@@ -12,20 +12,18 @@
         $this->route = $route;
         $this->viewController = new ViewController();
 
-        switch ($this->route) {
-            case 'doctors':
-                $viewPath = $this->viewController->renderView('components/doctors');
-                if (is_file($viewPath)) {
-                    include $this->viewController->renderView('header');
-                    include $viewPath;
-                    include $this->viewController->renderView('footer');
-                }
-                break;
-            default:
-                http_response_code(404);
-                echo 'Route not found';
-                break;
+        $safeRoute = preg_replace('/[^a-zA-Z0-9_-]/', '', (string)$this->route);
+        $viewPath = $this->viewController->renderView('components/' . $safeRoute);
+
+        if (is_file($viewPath)) {
+            include $this->viewController->renderView('header');
+            include $viewPath;
+            include $this->viewController->renderView('footer');
+            return;
         }
+
+        http_response_code(404);
+        echo 'Route not found';
      }
     }
 ?>
