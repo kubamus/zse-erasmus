@@ -15,6 +15,13 @@
       "when": 1774855459552,
       "tag": "0001_colossal_sleeper",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1774857937218,
+      "tag": "0002_yielding_iron_monger",
+      "breakpoints": true
     }
   ]
 }
