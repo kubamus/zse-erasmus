@@ -8,6 +8,13 @@
       "when": 1774608820547,
       "tag": "0000_square_meteorite",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1774855459552,
+      "tag": "0001_colossal_sleeper",
+      "breakpoints": true
     }
   ]
 }

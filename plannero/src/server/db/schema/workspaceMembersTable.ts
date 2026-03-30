@@ -30,6 +30,7 @@ export const workspaceMembersTable = mysqlTable(
       name: "workspace_member_workspace_id_user_id",
     }),
     index("workspace_member_userId_idx").on(table.userId),
+    index("workspace_member_workspaceId_role_idx").on(table.workspaceId, table.role),
   ],
 );
 
