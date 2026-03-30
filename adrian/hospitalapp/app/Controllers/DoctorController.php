@@ -22,6 +22,7 @@ class DoctorController
     public function index()
     {
         $doctors = $this->model->index();
+
         $this->viewController->renderView('doctors', ['doctors' => $doctors]);
     }
 }
