@@ -56,10 +56,10 @@ export function WorkspaceMembersPanel({ workspaceSlug }: { workspaceSlug: string
   return (
     <AppFrame title="Workspace Members" subtitle="Manage roles and team access.">
       {loading ? (
-        <div className="card rounded-2xl p-6">Loading members...</div>
+        <div className="surface rounded-2xl p-6">Loading members...</div>
       ) : (
         <div className="grid gap-4">
-          <div className="card rounded-2xl p-5">
+          <div className="surface rounded-2xl p-5">
             <h2 className="title-display text-2xl">Invite member</h2>
             <div className="mt-4 grid gap-2 sm:grid-cols-[1fr_auto_auto]">
               <input
@@ -87,7 +87,7 @@ export function WorkspaceMembersPanel({ workspaceSlug }: { workspaceSlug: string
             </div>
           </div>
 
-          <div className="card rounded-2xl p-5">
+          <div className="surface rounded-2xl p-5">
             <h2 className="title-display text-2xl">Current team</h2>
             <div className="mt-4 grid gap-2">
               {members.map((member) => (
@@ -97,7 +97,7 @@ export function WorkspaceMembersPanel({ workspaceSlug }: { workspaceSlug: string
                 >
                   <div>
                     <p className="font-semibold">{member.user.name}</p>
-                    <p className="text-xs text-[#574d45]">{member.user.email}</p>
+                    <p className="text-xs text-[var(--ink-2)]">{member.user.email}</p>
                   </div>
                   <p className="rounded-full border border-[var(--line)] px-3 py-1 text-xs uppercase tracking-[0.14em]">
                     {member.role}

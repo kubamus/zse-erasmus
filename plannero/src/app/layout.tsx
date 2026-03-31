@@ -1,20 +1,21 @@
 import type { Metadata } from "next";
-import { Syne, Manrope } from "next/font/google";
+import { Bricolage_Grotesque, Spectral } from "next/font/google";
 import "./globals.css";
 
-const display = Syne({
+const display = Bricolage_Grotesque({
   variable: "--font-display",
   subsets: ["latin"],
 });
 
-const body = Manrope({
+const body = Spectral({
   variable: "--font-body",
+  weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Plannero",
-  description: "A focused workspace for planning delivery.",
+  title: "Plannero - Team OS",
+  description: "A crafted workspace for boards, issues, and delivery flow.",
 };
 
 export default function RootLayout({

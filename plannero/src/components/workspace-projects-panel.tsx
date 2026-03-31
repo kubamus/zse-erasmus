@@ -58,18 +58,18 @@ export function WorkspaceProjectsPanel({ workspaceSlug }: { workspaceSlug: strin
       }
     >
       {loading ? (
-        <div className="card rounded-2xl p-6">Loading projects...</div>
+        <div className="surface rounded-2xl p-6">Loading projects...</div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => (
             <Link
               key={project.id}
               href={`/workspaces/${workspaceSlug}/projects/${project.key}`}
-              className="card rounded-2xl p-5 transition hover:-translate-y-0.5"
+              className="surface rounded-2xl p-5 transition hover:-translate-y-0.5"
             >
-              <p className="text-xs uppercase tracking-[0.18em] text-[#574d45]">{project.key}</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-[var(--ink-2)]">{project.key}</p>
               <h2 className="title-display mt-2 text-2xl">{project.name}</h2>
-              <p className="mt-2 text-sm text-[#574d45]">{project.description ?? "No description"}</p>
+              <p className="mt-2 text-sm text-[var(--ink-2)]">{project.description ?? "No description"}</p>
             </Link>
           ))}
         </div>

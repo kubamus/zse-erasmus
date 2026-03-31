@@ -47,22 +47,27 @@ export default function WorkspacesPage() {
       }
     >
       {loading ? (
-        <div className="card rounded-2xl p-6 text-sm text-[#574d45]">Loading workspaces...</div>
+        <div className="surface rounded-3xl p-6 text-sm text-[var(--ink-2)]">Loading workspaces...</div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((workspace) => (
             <Link
               key={workspace.id}
               href={`/workspaces/${workspace.slug}`}
-              className="card rounded-2xl p-5 transition hover:-translate-y-0.5"
+              className="surface group rounded-3xl p-6 transition"
             >
-              <p className="text-xs uppercase tracking-[0.18em] text-[#574d45]">Workspace</p>
-              <h2 className="title-display mt-2 text-2xl">{workspace.name}</h2>
-              <p className="mt-2 text-sm text-[#574d45]">/{workspace.slug}</p>
+              <div className="flex items-center justify-between">
+                <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-2)]">Workspace</p>
+                <span className="soft-pill rounded-full px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-[var(--ink-2)]">
+                  Open
+                </span>
+              </div>
+              <h2 className="title-display mt-3 text-3xl leading-tight">{workspace.name}</h2>
+              <p className="mt-2 text-sm text-[var(--ink-2)]">/{workspace.slug}</p>
             </Link>
           ))}
           {items.length === 0 ? (
-            <div className="card rounded-2xl p-6 text-sm text-[#574d45]">No workspaces yet. Create one.</div>
+            <div className="surface rounded-3xl p-6 text-sm text-[var(--ink-2)]">No workspaces yet. Create one.</div>
           ) : null}
         </div>
       )}

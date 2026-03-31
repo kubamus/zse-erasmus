@@ -180,14 +180,14 @@ export function BoardCanvas({
       }
     >
       {loading ? (
-        <div className="card rounded-2xl p-6">Loading board...</div>
+        <div className="surface rounded-2xl p-6">Loading board...</div>
       ) : (
         <div className="grid gap-4 lg:grid-flow-col lg:auto-cols-[minmax(260px,1fr)]">
           {columnsSorted.map((column) => (
-            <div key={column.id} className="card rounded-2xl p-4">
+            <div key={column.id} className="surface rounded-2xl p-4">
               <div className="flex items-center justify-between">
                 <h2 className="title-display text-2xl">{column.name}</h2>
-                <span className="text-xs uppercase tracking-[0.14em] text-[#574d45]">
+                <span className="text-xs uppercase tracking-[0.14em] text-[var(--ink-2)]">
                   {issues.filter((issue) => issue.columnId === column.id).length}
                 </span>
               </div>
@@ -217,7 +217,7 @@ export function BoardCanvas({
                     >
                       <Link href={`/workspaces/${workspaceSlug}/projects/${projectKey}/issues/${issue.id}`}>
                         <p className="font-semibold">#{issue.issueNumber} {issue.title}</p>
-                        <p className="mt-1 text-xs uppercase tracking-[0.12em] text-[#574d45]">
+                        <p className="mt-1 text-xs uppercase tracking-[0.12em] text-[var(--ink-2)]">
                           {issue.type} - {issue.priority}
                         </p>
                       </Link>
@@ -269,7 +269,7 @@ export function BoardCanvas({
               </div>
             </div>
           ))}
-          <div className="card rounded-2xl p-4">
+          <div className="surface rounded-2xl p-4">
             <h2 className="title-display text-2xl">Add column</h2>
             <div className="mt-3 grid gap-2">
               <input
@@ -287,7 +287,7 @@ export function BoardCanvas({
               </button>
             </div>
             {moving ? (
-              <p className="mt-3 text-xs uppercase tracking-[0.12em] text-[#574d45]">Moving issue...</p>
+              <p className="mt-3 text-xs uppercase tracking-[0.12em] text-[var(--ink-2)]">Moving issue...</p>
             ) : null}
           </div>
         </div>

@@ -131,17 +131,23 @@ export function ProjectHub({
             >
               Issues
             </Link>
+            <Link
+              href={`/workspaces/${workspaceSlug}/projects/${projectKey}/labels`}
+              className="rounded-xl border border-[var(--line)] px-4 py-2 text-sm"
+            >
+              Labels
+            </Link>
           </>
         ) : null
       }
     >
       {loading ? (
-        <div className="card rounded-2xl p-6">Loading project...</div>
+        <div className="surface rounded-2xl p-6">Loading project...</div>
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
-          <div className="card rounded-2xl p-6">
+          <div className="surface rounded-2xl p-6">
             <h2 className="title-display text-2xl">Boards</h2>
-            <p className="mt-1 text-sm text-[#574d45]">Enter board view to move issues quickly.</p>
+            <p className="mt-1 text-sm text-[var(--ink-2)]">Enter board view to move issues quickly.</p>
             <div className="mt-4 grid gap-2 rounded-xl border border-[var(--line)] bg-white/60 p-3">
               <input
                 value={newBoardName}
@@ -177,18 +183,27 @@ export function ProjectHub({
                   className="rounded-xl border border-[var(--line)] bg-white/70 px-4 py-3"
                 >
                   <p className="font-semibold">{board.name}</p>
-                  <p className="text-xs uppercase tracking-[0.14em] text-[#574d45]">{board.type}</p>
+                  <p className="text-xs uppercase tracking-[0.14em] text-[var(--ink-2)]">{board.type}</p>
+                </Link>
+              ))}
+              {boards.map((board) => (
+                <Link
+                  key={`${board.id}-settings`}
+                  href={`/workspaces/${workspaceSlug}/projects/${projectKey}/boards/${board.id}/settings`}
+                  className="rounded-xl border border-dashed border-[var(--line)] bg-white/40 px-4 py-2 text-xs uppercase tracking-[0.14em] text-[var(--ink-2)]"
+                >
+                  Configure {board.name}
                 </Link>
               ))}
               {boards.length === 0 ? (
-                <p className="rounded-xl border border-[var(--line)] bg-white/70 px-4 py-3 text-sm text-[#574d45]">
+                <p className="rounded-xl border border-[var(--line)] bg-white/70 px-4 py-3 text-sm text-[var(--ink-2)]">
                   No boards yet.
                 </p>
               ) : null}
             </div>
           </div>
 
-          <div className="card rounded-2xl p-6">
+          <div className="surface rounded-2xl p-6">
             <h2 className="title-display text-2xl">Quick actions</h2>
             <div className="mt-4 grid gap-2">
               <Link

@@ -35,8 +35,8 @@ export default function NewWorkspacePage() {
 
   return (
     <AppFrame title="Create Workspace" subtitle="Start a dedicated space for your team.">
-      <form onSubmit={submit} className="card max-w-xl rounded-2xl p-6">
-        <label htmlFor="workspace-name" className="text-sm text-[#574d45]">
+      <form onSubmit={submit} className="surface max-w-xl rounded-2xl p-6">
+        <label htmlFor="workspace-name" className="text-sm text-[var(--ink-2)]">
           Workspace name
         </label>
         <input

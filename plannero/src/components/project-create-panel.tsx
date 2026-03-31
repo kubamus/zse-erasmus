@@ -46,8 +46,8 @@ export function ProjectCreatePanel({ workspaceSlug }: { workspaceSlug: string })
 
   return (
     <AppFrame title="New Project" subtitle="Define a scope with a stable key and mission.">
-      <form onSubmit={createProject} className="card max-w-xl rounded-2xl p-6">
-        <label htmlFor="project-key" className="text-sm text-[#574d45]">
+      <form onSubmit={createProject} className="surface max-w-xl rounded-2xl p-6">
+        <label htmlFor="project-key" className="text-sm text-[var(--ink-2)]">
           Project key
         </label>
         <input
@@ -56,7 +56,7 @@ export function ProjectCreatePanel({ workspaceSlug }: { workspaceSlug: string })
           onChange={(event) => setKey(event.target.value.toUpperCase())}
           className="mt-2 w-full rounded-xl border border-[var(--line)] bg-white/80 px-4 py-3"
         />
-        <label htmlFor="project-name" className="mt-4 text-sm text-[#574d45]">
+        <label htmlFor="project-name" className="mt-4 text-sm text-[var(--ink-2)]">
           Name
         </label>
         <input
@@ -65,7 +65,7 @@ export function ProjectCreatePanel({ workspaceSlug }: { workspaceSlug: string })
           onChange={(event) => setName(event.target.value)}
           className="mt-2 w-full rounded-xl border border-[var(--line)] bg-white/80 px-4 py-3"
         />
-        <label htmlFor="project-description" className="mt-4 text-sm text-[#574d45]">
+        <label htmlFor="project-description" className="mt-4 text-sm text-[var(--ink-2)]">
           Description
         </label>
         <textarea

@@ -4,8 +4,8 @@ import { LogoutButton } from "@/components/logout-button";
 export default function LogoutPage() {
   return (
     <AppFrame title="Sign out" subtitle="Close your current session safely.">
-      <div className="card rounded-2xl p-6">
-        <p className="text-sm text-[#574d45]">
+      <div className="surface rounded-2xl p-6">
+        <p className="text-sm text-[var(--ink-2)]">
           You are signed in. Use the button below to end your session on this device.
         </p>
         <div className="mt-4">

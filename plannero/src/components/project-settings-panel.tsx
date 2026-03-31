@@ -69,8 +69,8 @@ export function ProjectSettingsPanel({
   return (
     <AppFrame title="Project Settings" subtitle="Keep naming and scope clean.">
       <div className="grid gap-4">
-        <div className="card rounded-2xl p-6">
-          <label htmlFor="project-name" className="text-sm text-[#574d45]">
+        <div className="surface rounded-2xl p-6">
+          <label htmlFor="project-name" className="text-sm text-[var(--ink-2)]">
             Name
           </label>
           <input
@@ -79,7 +79,7 @@ export function ProjectSettingsPanel({
             onChange={(event) => setName(event.target.value)}
             className="mt-2 w-full rounded-xl border border-[var(--line)] bg-white/80 px-4 py-3"
           />
-          <label htmlFor="project-description" className="mt-4 block text-sm text-[#574d45]">
+          <label htmlFor="project-description" className="mt-4 block text-sm text-[var(--ink-2)]">
             Description
           </label>
           <textarea
@@ -93,13 +93,13 @@ export function ProjectSettingsPanel({
             Save changes
           </button>
         </div>
-        <div className="card rounded-2xl p-6">
-          <p className="text-sm text-[#574d45]">Archive this project to hide it from active planning views.</p>
+        <div className="surface rounded-2xl p-6">
+          <p className="text-sm text-[var(--ink-2)]">Archive this project to hide it from active planning views.</p>
           <button type="button" onClick={archive} className="mt-3 rounded-xl bg-[var(--accent-1)] px-4 py-2 text-white">
             Archive project
           </button>
         </div>
-        {message ? <p className="text-sm text-[#574d45]">{message}</p> : null}
+        {message ? <p className="text-sm text-[var(--ink-2)]">{message}</p> : null}
       </div>
     </AppFrame>
   );

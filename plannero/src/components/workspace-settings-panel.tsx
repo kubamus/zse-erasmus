@@ -60,11 +60,11 @@ export function WorkspaceSettingsPanel({ workspaceSlug }: { workspaceSlug: strin
   return (
     <AppFrame title="Workspace Settings" subtitle="Rename or archive this workspace.">
       {loading || !workspace ? (
-        <div className="card rounded-2xl p-6">Loading workspace...</div>
+        <div className="surface rounded-2xl p-6">Loading workspace...</div>
       ) : (
         <div className="grid gap-4">
-          <div className="card rounded-2xl p-6">
-            <label htmlFor="workspace-name" className="text-sm text-[#574d45]">
+          <div className="surface rounded-2xl p-6">
+            <label htmlFor="workspace-name" className="text-sm text-[var(--ink-2)]">
               Workspace name
             </label>
             <input
@@ -82,8 +82,8 @@ export function WorkspaceSettingsPanel({ workspaceSlug }: { workspaceSlug: strin
             </button>
           </div>
 
-          <div className="card rounded-2xl p-6">
-            <p className="text-sm text-[#574d45]">
+          <div className="surface rounded-2xl p-6">
+            <p className="text-sm text-[var(--ink-2)]">
               Archiving hides this workspace and all nested entities from active views.
             </p>
             <button
@@ -95,7 +95,7 @@ export function WorkspaceSettingsPanel({ workspaceSlug }: { workspaceSlug: strin
             </button>
           </div>
 
-          {message ? <p className="text-sm text-[#574d45]">{message}</p> : null}
+          {message ? <p className="text-sm text-[var(--ink-2)]">{message}</p> : null}
         </div>
       )}
     </AppFrame>

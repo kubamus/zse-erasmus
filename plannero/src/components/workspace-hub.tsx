@@ -46,7 +46,7 @@ export function WorkspaceHub({ workspaceSlug }: WorkspaceHubProps) {
   if (loading || !current) {
     return (
       <AppFrame title="Loading workspace" subtitle="Resolving workspace context...">
-        <div className="card rounded-2xl p-6 text-sm text-[#574d45]">Please wait.</div>
+        <div className="surface rounded-2xl p-6 text-sm text-[var(--ink-2)]">Please wait.</div>
       </AppFrame>
     );
   }
@@ -67,23 +67,23 @@ export function WorkspaceHub({ workspaceSlug }: WorkspaceHubProps) {
       <div className="grid gap-4 md:grid-cols-3">
         <Link
           href={`/workspaces/${current.slug}/projects`}
-          className="card rounded-2xl p-6 transition hover:-translate-y-0.5"
+          className="surface rounded-2xl p-6 transition hover:-translate-y-0.5"
         >
-          <p className="text-xs uppercase tracking-[0.18em] text-[#574d45]">Projects</p>
+          <p className="text-xs uppercase tracking-[0.18em] text-[var(--ink-2)]">Projects</p>
           <h2 className="title-display mt-2 text-2xl">View all projects</h2>
         </Link>
         <Link
           href={`/workspaces/${current.slug}/members`}
-          className="card rounded-2xl p-6 transition hover:-translate-y-0.5"
+          className="surface rounded-2xl p-6 transition hover:-translate-y-0.5"
         >
-          <p className="text-xs uppercase tracking-[0.18em] text-[#574d45]">Members</p>
+          <p className="text-xs uppercase tracking-[0.18em] text-[var(--ink-2)]">Members</p>
           <h2 className="title-display mt-2 text-2xl">Manage team access</h2>
         </Link>
         <Link
           href={`/workspaces/${current.slug}/settings`}
-          className="card rounded-2xl p-6 transition hover:-translate-y-0.5"
+          className="surface rounded-2xl p-6 transition hover:-translate-y-0.5"
         >
-          <p className="text-xs uppercase tracking-[0.18em] text-[#574d45]">Settings</p>
+          <p className="text-xs uppercase tracking-[0.18em] text-[var(--ink-2)]">Settings</p>
           <h2 className="title-display mt-2 text-2xl">Workspace controls</h2>
         </Link>
       </div>
