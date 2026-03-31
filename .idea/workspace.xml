@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4b5f2879-0428-4061-9f22-8fda72a7a9e6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/adrian/hospitalapp/app/Controllers/DoctorController.php" beforeDir="false" afterPath="$PROJECT_DIR$/adrian/hospitalapp/app/Controllers/DoctorController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adrian/hospitalapp/app/Models/Doctor.php" beforeDir="false" afterPath="$PROJECT_DIR$/adrian/hospitalapp/app/Models/Doctor.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adrian/hospitalapp/app/Views/components/doctors.php" beforeDir="false" afterPath="$PROJECT_DIR$/adrian/hospitalapp/app/Views/components/doctors.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
