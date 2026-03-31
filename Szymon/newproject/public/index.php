@@ -1,5 +1,5 @@
 <?php
-
+echo "welcome to laravel composer website!";
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 

@@ -1,5 +1,5 @@
 <?php
-
+echo "welcome to laravel composer website! (app)";
 /*
 |--------------------------------------------------------------------------
 | Create The Application
