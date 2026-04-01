@@ -1,4 +1,5 @@
 import {
+  datetime,
   index,
   mysqlTable,
   text,
@@ -20,12 +21,13 @@ export const accountsTable = mysqlTable(
     accessToken: text("access_token"),
     refreshToken: text("refresh_token"),
     idToken: text("id_token"),
-    accessTokenExpiresAt: timestamp("access_token_expires_at", { fsp: 3 }),
-    refreshTokenExpiresAt: timestamp("refresh_token_expires_at", { fsp: 3 }),
+    accessTokenExpiresAt: datetime("access_token_expires_at", { fsp: 3 }),
+    refreshTokenExpiresAt: datetime("refresh_token_expires_at", { fsp: 3 }),
     scope: text("scope"),
     password: text("password"),
     createdAt: timestamp("created_at", { fsp: 3 }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { fsp: 3 })
+      .defaultNow()
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },

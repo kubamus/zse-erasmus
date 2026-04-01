@@ -47,7 +47,20 @@ export function AuthCard({ mode }: AuthCardProps) {
         <div className="pointer-events-none absolute -bottom-12 left-[54%] h-64 w-64 -translate-x-1/2 rounded-[44%_56%_47%_53%/65%_37%_63%_35%] bg-[var(--accent-pink)] opacity-75" />
 
         <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 border-2 border-[var(--line-strong)] bg-[rgba(255,255,255,0.84)] px-4 py-3 sm:px-6">
-          <p className="text-sm font-black tracking-tight sm:text-xl">YOUR LOGO</p>
+          <Link
+            href="/"
+            aria-label="Plannero"
+            className="sticker inline-flex rounded-md border-2 border-[var(--line-strong)] bg-[#e0d0b7] px-2 py-1.5"
+          >
+            <Image
+              src="/plannero.png"
+              alt="Plannero"
+              width={520}
+              height={160}
+              priority
+              className="h-auto w-[120px] sm:w-[150px]"
+            />
+          </Link>
           <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
             <span className="nav-item nav-item-active rounded-md px-3 py-1.5">Product</span>
             <span className="nav-item rounded-md px-3 py-1.5">About Us</span>
