@@ -1,1 +1,1 @@
-this is index for public folder
+this is the public folder index
