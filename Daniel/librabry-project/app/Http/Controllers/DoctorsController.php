@@ -15,7 +15,8 @@ class DoctorsController extends Controller
     }
     public function index()
     {
-        $doctors = $this->model->with('specialization')->get();
+        $doctors = $this->model->with(['specialization', 'department'] )->get();
         return view('doctors.doctors', compact('doctors'));
+
     }
 }
