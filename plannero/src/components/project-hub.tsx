@@ -121,19 +121,19 @@ export function ProjectHub({
           <>
             <Link
               href={`/workspaces/${workspaceSlug}/projects/${projectKey}/settings`}
-              className="rounded-xl border border-[var(--line)] px-4 py-2 text-sm"
+              className="brutal-button-secondary rounded-md px-4 py-2 text-sm"
             >
               Settings
             </Link>
             <Link
               href={`/workspaces/${workspaceSlug}/projects/${projectKey}/issues`}
-              className="rounded-xl bg-[var(--accent-2)] px-4 py-2 text-sm text-white"
+              className="brutal-button rounded-md px-4 py-2 text-sm"
             >
               Issues
             </Link>
             <Link
               href={`/workspaces/${workspaceSlug}/projects/${projectKey}/labels`}
-              className="rounded-xl border border-[var(--line)] px-4 py-2 text-sm"
+              className="brutal-button-secondary rounded-md px-4 py-2 text-sm"
             >
               Labels
             </Link>
@@ -145,21 +145,21 @@ export function ProjectHub({
         <div className="surface rounded-2xl p-6">Loading project...</div>
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
-          <div className="surface rounded-2xl p-6">
+          <div className="surface rounded-[14px] p-6">
             <h2 className="title-display text-2xl">Boards</h2>
             <p className="mt-1 text-sm text-[var(--ink-2)]">Enter board view to move issues quickly.</p>
-            <div className="mt-4 grid gap-2 rounded-xl border border-[var(--line)] bg-white/60 p-3">
+            <div className="mt-4 grid gap-2 rounded-md border-2 border-[var(--line-strong)] bg-white/60 p-3">
               <input
                 value={newBoardName}
                 onChange={(event) => setNewBoardName(event.target.value)}
                 placeholder="Board name"
-                className="rounded-xl border border-[var(--line)] bg-white/80 px-3 py-2"
+                className="brutal-input rounded-md px-3 py-2"
               />
               <div className="grid grid-cols-[1fr_auto] gap-2">
                 <select
                   value={newBoardType}
                   onChange={(event) => setNewBoardType(event.target.value as "kanban" | "scrum")}
-                  className="rounded-xl border border-[var(--line)] bg-white/80 px-3 py-2"
+                  className="brutal-input rounded-md px-3 py-2"
                 >
                   <option value="kanban">kanban</option>
                   <option value="scrum">scrum</option>
@@ -168,7 +168,7 @@ export function ProjectHub({
                   type="button"
                   onClick={createBoard}
                   disabled={creatingBoard}
-                  className="rounded-xl bg-[var(--accent-1)] px-4 py-2 text-sm text-white disabled:opacity-50"
+                  className="brutal-button rounded-md px-4 py-2 text-sm"
                 >
                   {creatingBoard ? "Creating..." : "Create"}
                 </button>
@@ -180,42 +180,42 @@ export function ProjectHub({
                 <Link
                   key={board.id}
                   href={`/workspaces/${workspaceSlug}/projects/${projectKey}/boards/${board.id}`}
-                  className="rounded-xl border border-[var(--line)] bg-white/70 px-4 py-3"
+                  className="sticker rounded-md bg-white px-4 py-3"
                 >
                   <p className="font-semibold">{board.name}</p>
-                  <p className="text-xs uppercase tracking-[0.14em] text-[var(--ink-2)]">{board.type}</p>
+                  <p className="caption-kicker">{board.type}</p>
                 </Link>
               ))}
               {boards.map((board) => (
                 <Link
                   key={`${board.id}-settings`}
                   href={`/workspaces/${workspaceSlug}/projects/${projectKey}/boards/${board.id}/settings`}
-                  className="rounded-xl border border-dashed border-[var(--line)] bg-white/40 px-4 py-2 text-xs uppercase tracking-[0.14em] text-[var(--ink-2)]"
+                  className="rounded-md border-2 border-dashed border-[var(--line-strong)] bg-white/40 px-4 py-2 text-xs uppercase tracking-[0.14em] text-[var(--ink-2)]"
                 >
                   Configure {board.name}
                 </Link>
               ))}
               {boards.length === 0 ? (
-                <p className="rounded-xl border border-[var(--line)] bg-white/70 px-4 py-3 text-sm text-[var(--ink-2)]">
+                <p className="rounded-md border-2 border-[var(--line-strong)] bg-white/70 px-4 py-3 text-sm text-[var(--ink-2)]">
                   No boards yet.
                 </p>
               ) : null}
             </div>
           </div>
 
-          <div className="surface rounded-2xl p-6">
+          <div className="surface rounded-[14px] p-6">
             <h2 className="title-display text-2xl">Quick actions</h2>
             <div className="mt-4 grid gap-2">
               <Link
                 href={`/workspaces/${workspaceSlug}/projects/${projectKey}/issues`}
-                className="rounded-xl border border-[var(--line)] bg-white/70 px-4 py-3"
+                className="sticker rounded-md bg-white px-4 py-3"
               >
                 Browse all issues
               </Link>
               {fallbackBoard ? (
                 <Link
                   href={`/workspaces/${workspaceSlug}/projects/${projectKey}/boards/${fallbackBoard.id}`}
-                  className="rounded-xl border border-[var(--line)] bg-white/70 px-4 py-3"
+                  className="sticker rounded-md bg-white px-4 py-3"
                 >
                   Open default board
                 </Link>

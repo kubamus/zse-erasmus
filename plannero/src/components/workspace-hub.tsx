@@ -58,7 +58,7 @@ export function WorkspaceHub({ workspaceSlug }: WorkspaceHubProps) {
       actions={
         <Link
           href={`/workspaces/${current.slug}/projects/new`}
-          className="rounded-xl bg-[var(--accent-1)] px-4 py-2 text-sm text-white"
+          className="brutal-button rounded-md px-4 py-2 text-sm"
         >
           New Project
         </Link>
@@ -67,23 +67,23 @@ export function WorkspaceHub({ workspaceSlug }: WorkspaceHubProps) {
       <div className="grid gap-4 md:grid-cols-3">
         <Link
           href={`/workspaces/${current.slug}/projects`}
-          className="surface rounded-2xl p-6 transition hover:-translate-y-0.5"
+          className="surface rounded-[14px] p-6 transition"
         >
-          <p className="text-xs uppercase tracking-[0.18em] text-[var(--ink-2)]">Projects</p>
+          <p className="caption-kicker">Projects</p>
           <h2 className="title-display mt-2 text-2xl">View all projects</h2>
         </Link>
         <Link
           href={`/workspaces/${current.slug}/members`}
-          className="surface rounded-2xl p-6 transition hover:-translate-y-0.5"
+          className="surface rounded-[14px] p-6 transition"
         >
-          <p className="text-xs uppercase tracking-[0.18em] text-[var(--ink-2)]">Members</p>
+          <p className="caption-kicker">Members</p>
           <h2 className="title-display mt-2 text-2xl">Manage team access</h2>
         </Link>
         <Link
           href={`/workspaces/${current.slug}/settings`}
-          className="surface rounded-2xl p-6 transition hover:-translate-y-0.5"
+          className="surface rounded-[14px] p-6 transition"
         >
-          <p className="text-xs uppercase tracking-[0.18em] text-[var(--ink-2)]">Settings</p>
+          <p className="caption-kicker">Settings</p>
           <h2 className="title-display mt-2 text-2xl">Workspace controls</h2>
         </Link>
       </div>

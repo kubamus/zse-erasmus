@@ -56,22 +56,22 @@ export function WorkspaceMembersPanel({ workspaceSlug }: { workspaceSlug: string
   return (
     <AppFrame title="Workspace Members" subtitle="Manage roles and team access.">
       {loading ? (
-        <div className="surface rounded-2xl p-6">Loading members...</div>
+        <div className="surface rounded-[14px] p-6">Loading members...</div>
       ) : (
         <div className="grid gap-4">
-          <div className="surface rounded-2xl p-5">
+          <div className="surface rounded-[14px] p-5">
             <h2 className="title-display text-2xl">Invite member</h2>
             <div className="mt-4 grid gap-2 sm:grid-cols-[1fr_auto_auto]">
               <input
                 value={userId}
                 onChange={(event) => setUserId(event.target.value)}
                 placeholder="User id"
-                className="rounded-xl border border-[var(--line)] bg-white/80 px-4 py-2.5"
+                className="brutal-input rounded-md px-4 py-2.5"
               />
               <select
                 value={role}
                 onChange={(event) => setRole(event.target.value as "owner" | "admin" | "member")}
-                className="rounded-xl border border-[var(--line)] bg-white/80 px-4 py-2.5"
+                className="brutal-input rounded-md px-4 py-2.5"
               >
                 <option value="owner">owner</option>
                 <option value="admin">admin</option>
@@ -80,26 +80,26 @@ export function WorkspaceMembersPanel({ workspaceSlug }: { workspaceSlug: string
               <button
                 type="button"
                 onClick={addMember}
-                className="rounded-xl bg-[var(--accent-2)] px-4 py-2.5 text-white"
+                className="brutal-button rounded-md px-4 py-2.5"
               >
                 Add
               </button>
             </div>
           </div>
 
-          <div className="surface rounded-2xl p-5">
+          <div className="surface rounded-[14px] p-5">
             <h2 className="title-display text-2xl">Current team</h2>
             <div className="mt-4 grid gap-2">
               {members.map((member) => (
                 <div
                   key={member.user.id}
-                  className="flex items-center justify-between rounded-xl border border-[var(--line)] bg-white/70 px-4 py-3"
+                  className="sticker flex items-center justify-between rounded-md bg-white px-4 py-3"
                 >
                   <div>
                     <p className="font-semibold">{member.user.name}</p>
                     <p className="text-xs text-[var(--ink-2)]">{member.user.email}</p>
                   </div>
-                  <p className="rounded-full border border-[var(--line)] px-3 py-1 text-xs uppercase tracking-[0.14em]">
+                  <p className="sticker rounded-full bg-[var(--accent-yellow)] px-3 py-1 text-xs uppercase tracking-[0.14em]">
                     {member.role}
                   </p>
                 </div>

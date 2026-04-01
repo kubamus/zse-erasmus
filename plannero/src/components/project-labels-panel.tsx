@@ -73,38 +73,38 @@ export function ProjectLabelsPanel({
   return (
     <AppFrame title="Project Labels" subtitle="Manage issue taxonomy and visual tags.">
       <div className="grid gap-4">
-        <div className="surface rounded-2xl p-6">
+        <div className="surface rounded-[14px] p-6">
           <h2 className="title-display text-2xl">Create label</h2>
           <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_auto_auto]">
             <input
               value={name}
               onChange={(event) => setName(event.target.value)}
-              className="rounded-xl border border-[var(--line)] bg-white/80 px-3 py-2"
+              className="brutal-input rounded-md px-3 py-2"
               placeholder="Label name"
             />
             <input
               value={color}
               onChange={(event) => setColor(event.target.value)}
-              className="w-32 rounded-xl border border-[var(--line)] bg-white/80 px-3 py-2"
+              className="brutal-input w-32 rounded-md px-3 py-2"
               placeholder="#RRGGBB"
             />
             <button
               type="button"
               onClick={createLabel}
-              className="rounded-xl bg-[var(--accent-1)] px-4 py-2 text-white"
+              className="brutal-button rounded-md px-4 py-2"
             >
               Add
             </button>
           </div>
         </div>
 
-        <div className="surface rounded-2xl p-6">
+        <div className="surface rounded-[14px] p-6">
           <h2 className="title-display text-2xl">Labels</h2>
           <div className="mt-3 grid gap-2">
             {labels.map((label) => (
               <div
                 key={label.id}
-                className="grid gap-2 rounded-xl border border-[var(--line)] bg-white/70 p-3 sm:grid-cols-[1fr_auto_auto]"
+                className="sticker grid gap-2 rounded-md bg-white p-3 sm:grid-cols-[1fr_auto_auto]"
               >
                 <input
                   value={label.name}
@@ -115,7 +115,7 @@ export function ProjectLabelsPanel({
                       ),
                     );
                   }}
-                  className="rounded-xl border border-[var(--line)] bg-white px-3 py-2"
+                  className="brutal-input rounded-md px-3 py-2"
                 />
                 <input
                   value={label.color}
@@ -126,20 +126,20 @@ export function ProjectLabelsPanel({
                       ),
                     );
                   }}
-                  className="w-32 rounded-xl border border-[var(--line)] bg-white px-3 py-2"
+                  className="brutal-input w-32 rounded-md px-3 py-2"
                 />
                 <div className="flex gap-1">
                   <button
                     type="button"
                     onClick={() => updateLabel(label)}
-                    className="rounded-xl bg-[var(--accent-2)] px-3 py-2 text-sm text-white"
+                    className="brutal-button rounded-md px-3 py-2 text-sm"
                   >
                     Save
                   </button>
                   <button
                     type="button"
                     onClick={() => deleteLabel(label.id)}
-                    className="rounded-xl bg-[var(--accent-1)] px-3 py-2 text-sm text-white"
+                    className="brutal-button rounded-md bg-[#11110f] px-3 py-2 text-sm"
                   >
                     Delete
                   </button>

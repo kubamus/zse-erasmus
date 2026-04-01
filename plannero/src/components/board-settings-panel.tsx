@@ -149,7 +149,7 @@ export function BoardSettingsPanel({
   if (loading || !board || !project) {
     return (
       <AppFrame title="Board settings" subtitle="Loading...">
-        <div className="surface rounded-2xl p-6">Please wait</div>
+        <div className="surface rounded-[14px] p-6">Please wait</div>
       </AppFrame>
     );
   }
@@ -157,18 +157,18 @@ export function BoardSettingsPanel({
   return (
     <AppFrame title="Board Settings" subtitle="Tune board and columns.">
       <div className="grid gap-4">
-        <div className="surface rounded-2xl p-6">
+        <div className="surface rounded-[14px] p-6">
           <h2 className="title-display text-2xl">Board</h2>
           <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_auto_auto]">
             <input
               value={boardName}
               onChange={(event) => setBoardName(event.target.value)}
-              className="rounded-xl border border-[var(--line)] bg-white/80 px-3 py-2"
+              className="brutal-input rounded-md px-3 py-2"
             />
             <select
               value={boardType}
               onChange={(event) => setBoardType(event.target.value as "kanban" | "scrum")}
-              className="rounded-xl border border-[var(--line)] bg-white/80 px-3 py-2"
+              className="brutal-input rounded-md px-3 py-2"
             >
               <option value="kanban">kanban</option>
               <option value="scrum">scrum</option>
@@ -176,7 +176,7 @@ export function BoardSettingsPanel({
             <button
               type="button"
               onClick={saveBoard}
-              className="rounded-xl bg-[var(--accent-2)] px-4 py-2 text-white"
+              className="brutal-button rounded-md px-4 py-2"
             >
               Save board
             </button>
@@ -184,25 +184,25 @@ export function BoardSettingsPanel({
           <button
             type="button"
             onClick={archiveBoard}
-            className="mt-3 rounded-xl bg-[var(--accent-1)] px-4 py-2 text-white"
+            className="brutal-button mt-3 rounded-md bg-[#11110f] px-4 py-2"
           >
             Archive board
           </button>
         </div>
 
-        <div className="surface rounded-2xl p-6">
+        <div className="surface rounded-[14px] p-6">
           <h2 className="title-display text-2xl">Columns</h2>
           <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_auto]">
             <input
               value={newColumnName}
               onChange={(event) => setNewColumnName(event.target.value)}
-              className="rounded-xl border border-[var(--line)] bg-white/80 px-3 py-2"
+              className="brutal-input rounded-md px-3 py-2"
               placeholder="New column"
             />
             <button
               type="button"
               onClick={createColumn}
-              className="rounded-xl bg-[var(--accent-1)] px-4 py-2 text-white"
+              className="brutal-button rounded-md px-4 py-2"
             >
               Create column
             </button>
@@ -212,7 +212,7 @@ export function BoardSettingsPanel({
             {sortedColumns.map((column, index) => (
               <div
                 key={column.id}
-                className="grid gap-2 rounded-xl border border-[var(--line)] bg-white/70 p-3 sm:grid-cols-[1fr_auto_auto_auto_auto]"
+                className="sticker grid gap-2 rounded-md bg-white p-3 sm:grid-cols-[1fr_auto_auto_auto_auto]"
               >
                 <input
                   value={column.name}
@@ -223,7 +223,7 @@ export function BoardSettingsPanel({
                       ),
                     );
                   }}
-                  className="rounded-xl border border-[var(--line)] bg-white px-3 py-2"
+                  className="brutal-input rounded-md px-3 py-2"
                 />
                 <input
                   type="number"
@@ -239,9 +239,9 @@ export function BoardSettingsPanel({
                     );
                   }}
                   placeholder="WIP"
-                  className="w-24 rounded-xl border border-[var(--line)] bg-white px-3 py-2"
+                  className="brutal-input w-24 rounded-md px-3 py-2"
                 />
-                <label className="flex items-center gap-2 rounded-xl border border-[var(--line)] bg-white px-3 py-2 text-xs uppercase tracking-[0.12em]">
+                <label className="sticker flex items-center gap-2 rounded-md bg-[var(--accent-lime)] px-3 py-2 text-xs uppercase tracking-[0.12em]">
                   <input
                     type="checkbox"
                     checked={column.isDoneColumn}
@@ -262,7 +262,7 @@ export function BoardSettingsPanel({
                     type="button"
                     disabled={index === 0}
                     onClick={() => moveColumn(column, -1)}
-                    className="rounded-xl border border-[var(--line)] bg-white px-3 py-2 text-sm disabled:opacity-40"
+                    className="brutal-button-secondary rounded-md px-3 py-2 text-sm disabled:opacity-40"
                   >
                     ↑
                   </button>
@@ -270,7 +270,7 @@ export function BoardSettingsPanel({
                     type="button"
                     disabled={index === sortedColumns.length - 1}
                     onClick={() => moveColumn(column, 1)}
-                    className="rounded-xl border border-[var(--line)] bg-white px-3 py-2 text-sm disabled:opacity-40"
+                    className="brutal-button-secondary rounded-md px-3 py-2 text-sm disabled:opacity-40"
                   >
                     ↓
                   </button>
@@ -279,14 +279,14 @@ export function BoardSettingsPanel({
                   <button
                     type="button"
                     onClick={() => updateColumn(column, {})}
-                    className="rounded-xl bg-[var(--accent-2)] px-3 py-2 text-sm text-white"
+                    className="brutal-button rounded-md px-3 py-2 text-sm"
                   >
                     Save
                   </button>
                   <button
                     type="button"
                     onClick={() => deleteColumn(column.id)}
-                    className="rounded-xl bg-[var(--accent-1)] px-3 py-2 text-sm text-white"
+                    className="brutal-button rounded-md bg-[#11110f] px-3 py-2 text-sm"
                   >
                     Delete
                   </button>

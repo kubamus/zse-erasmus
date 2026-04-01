@@ -60,36 +60,36 @@ export function WorkspaceSettingsPanel({ workspaceSlug }: { workspaceSlug: strin
   return (
     <AppFrame title="Workspace Settings" subtitle="Rename or archive this workspace.">
       {loading || !workspace ? (
-        <div className="surface rounded-2xl p-6">Loading workspace...</div>
+        <div className="surface rounded-[14px] p-6">Loading workspace...</div>
       ) : (
         <div className="grid gap-4">
-          <div className="surface rounded-2xl p-6">
-            <label htmlFor="workspace-name" className="text-sm text-[var(--ink-2)]">
+          <div className="surface rounded-[14px] p-6">
+            <label htmlFor="workspace-name" className="caption-kicker">
               Workspace name
             </label>
             <input
               id="workspace-name"
               value={name}
               onChange={(event) => setName(event.target.value)}
-              className="mt-2 w-full rounded-xl border border-[var(--line)] bg-white/80 px-4 py-3"
+              className="brutal-input mt-2 w-full rounded-md px-4 py-3"
             />
             <button
               type="button"
               onClick={updateWorkspace}
-              className="mt-4 rounded-xl bg-[var(--accent-2)] px-4 py-2 text-white"
+              className="brutal-button mt-4 rounded-md px-4 py-2"
             >
               Save
             </button>
           </div>
 
-          <div className="surface rounded-2xl p-6">
+          <div className="surface rounded-[14px] p-6">
             <p className="text-sm text-[var(--ink-2)]">
               Archiving hides this workspace and all nested entities from active views.
             </p>
             <button
               type="button"
               onClick={archiveWorkspace}
-              className="mt-4 rounded-xl bg-[var(--accent-1)] px-4 py-2 text-white"
+              className="brutal-button mt-4 rounded-md bg-[#11110f] px-4 py-2"
             >
               Archive Workspace
             </button>

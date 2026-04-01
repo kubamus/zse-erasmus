@@ -1,21 +1,23 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Spectral } from "next/font/google";
+import { Archivo_Black, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 
-const display = Bricolage_Grotesque({
+const display = Archivo_Black({
   variable: "--font-display",
+  weight: "400",
   subsets: ["latin"],
 });
 
-const body = Spectral({
+const body = IBM_Plex_Sans({
   variable: "--font-body",
   weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Plannero - Team OS",
-  description: "A crafted workspace for boards, issues, and delivery flow.",
+  title: "Plannero",
+  description:
+    "Best app for task management in the history of task management apps.",
 };
 
 export default function RootLayout({
@@ -24,7 +26,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} h-full antialiased`}>
+    <html
+      lang="en"
+      className={`${display.variable} ${body.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
       <body className="min-h-full">{children}</body>
     </html>
   );

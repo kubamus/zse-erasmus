@@ -226,32 +226,32 @@ export function IssueDetailPanel({
       actions={
         <Link
           href={`/workspaces/${workspace.slug}/projects/${project.key}/issues`}
-          className="rounded-xl border border-[var(--line)] px-4 py-2 text-sm"
+          className="brutal-button-secondary rounded-md px-4 py-2 text-sm"
         >
           Back to issues
         </Link>
       }
     >
       <div className="grid gap-4 xl:grid-cols-[1.4fr_1fr]">
-        <div className="surface rounded-2xl p-6">
+        <div className="surface rounded-[14px] p-6">
           <h2 className="title-display text-2xl">Issue review</h2>
           <div className="mt-3 grid gap-2">
             <input
               value={newTitle}
               onChange={(event) => setNewTitle(event.target.value)}
-              className="rounded-xl border border-[var(--line)] bg-white/80 px-4 py-3"
+              className="brutal-input rounded-md px-4 py-3"
             />
             <textarea
               value={newDescription}
               onChange={(event) => setNewDescription(event.target.value)}
               rows={6}
-              className="rounded-xl border border-[var(--line)] bg-white/80 px-4 py-3"
+              className="brutal-input rounded-md px-4 py-3"
             />
             <div className="grid grid-cols-2 gap-2">
               <select
                 value={newType}
                 onChange={(event) => setNewType(event.target.value as "task" | "bug" | "story" | "chore")}
-                className="rounded-xl border border-[var(--line)] bg-white/80 px-4 py-3"
+                className="brutal-input rounded-md px-4 py-3"
               >
                 <option value="task">task</option>
                 <option value="bug">bug</option>
@@ -263,7 +263,7 @@ export function IssueDetailPanel({
                 onChange={(event) =>
                   setNewPriority(event.target.value as "low" | "medium" | "high" | "critical")
                 }
-                className="rounded-xl border border-[var(--line)] bg-white/80 px-4 py-3"
+                className="brutal-input rounded-md px-4 py-3"
               >
                 <option value="low">low</option>
                 <option value="medium">medium</option>
@@ -275,7 +275,7 @@ export function IssueDetailPanel({
               type="button"
               onClick={saveIssue}
               disabled={saving}
-              className="w-fit rounded-xl bg-[var(--accent-1)] px-4 py-2 text-white disabled:opacity-50"
+              className="brutal-button w-fit rounded-md px-4 py-2"
             >
               {saving ? "Saving..." : "Save issue"}
             </button>
@@ -287,18 +287,18 @@ export function IssueDetailPanel({
               value={commentBody}
               onChange={(event) => setCommentBody(event.target.value)}
               rows={4}
-              className="mt-2 w-full rounded-xl border border-[var(--line)] bg-white/80 px-4 py-3"
+              className="brutal-input mt-2 w-full rounded-md px-4 py-3"
             />
             <button
               type="button"
               onClick={addComment}
-              className="mt-3 rounded-xl bg-[var(--accent-2)] px-4 py-2 text-white"
+              className="brutal-button mt-3 rounded-md px-4 py-2"
             >
               Post comment
             </button>
             <div className="mt-4 grid gap-2">
               {comments.map((comment) => (
-                <div key={comment.id} className="rounded-xl border border-[var(--line)] bg-white/70 px-4 py-3">
+                <div key={comment.id} className="sticker rounded-md bg-white px-4 py-3">
                   <p className="text-sm">{comment.body}</p>
                   <p className="mt-1 text-xs text-[var(--ink-2)]">
                     {comment.author.name} ({comment.author.email})
@@ -310,7 +310,7 @@ export function IssueDetailPanel({
         </div>
 
         <div className="grid gap-4">
-          <div className="surface rounded-2xl p-5">
+          <div className="surface rounded-[14px] p-5">
             <h3 className="font-semibold">Assignees</h3>
             <div className="mt-3 flex flex-wrap gap-2">
               {issue.assignees.map((assignee) => (
@@ -318,7 +318,7 @@ export function IssueDetailPanel({
                   type="button"
                   key={assignee.id}
                   onClick={() => removeAssignee(assignee.id)}
-                  className="rounded-full border border-[var(--line)] bg-white px-3 py-1 text-xs"
+                  className="sticker rounded-full bg-white px-3 py-1 text-xs"
                 >
                   {assignee.name} - remove
                 </button>
@@ -331,7 +331,7 @@ export function IssueDetailPanel({
               <select
                 value={assigneeUserId}
                 onChange={(event) => setAssigneeUserId(event.target.value)}
-                className="rounded-xl border border-[var(--line)] bg-white/80 px-3 py-2"
+                className="brutal-input rounded-md px-3 py-2"
               >
                 <option value="">select member</option>
                 {availableAssignees.map((member) => (
@@ -343,14 +343,14 @@ export function IssueDetailPanel({
               <button
                 type="button"
                 onClick={addAssignee}
-                className="rounded-xl bg-[var(--accent-2)] px-3 py-2 text-sm text-white"
+                className="brutal-button rounded-md px-3 py-2 text-sm"
               >
                 Add assignee
               </button>
             </div>
           </div>
 
-          <div className="surface rounded-2xl p-5">
+          <div className="surface rounded-[14px] p-5">
             <h3 className="font-semibold">Labels</h3>
             <div className="mt-3 flex flex-wrap gap-2">
               {issue.labels.map((currentLabel) => (
@@ -358,7 +358,7 @@ export function IssueDetailPanel({
                   type="button"
                   key={currentLabel.id}
                   onClick={() => removeLabel(currentLabel.id)}
-                  className="rounded-full border px-3 py-1 text-xs"
+                  className="rounded-full border-2 px-3 py-1 text-xs"
                   style={{
                     backgroundColor: `${currentLabel.color}22`,
                     borderColor: `${currentLabel.color}66`,
@@ -375,7 +375,7 @@ export function IssueDetailPanel({
               <select
                 value={labelId}
                 onChange={(event) => setLabelId(event.target.value)}
-                className="rounded-xl border border-[var(--line)] bg-white/80 px-3 py-2"
+                className="brutal-input rounded-md px-3 py-2"
               >
                 <option value="">select label</option>
                 {availableLabels.map((candidate) => (
@@ -387,18 +387,18 @@ export function IssueDetailPanel({
               <button
                 type="button"
                 onClick={addLabel}
-                className="rounded-xl bg-[var(--accent-2)] px-3 py-2 text-sm text-white"
+                className="brutal-button rounded-md px-3 py-2 text-sm"
               >
                 Add label
               </button>
             </div>
           </div>
 
-          <div className="surface rounded-2xl p-5">
+          <div className="surface rounded-[14px] p-5">
             <h3 className="font-semibold">Activity</h3>
             <div className="mt-3 grid gap-2">
               {activity.map((event) => (
-                <div key={event.id} className="rounded-xl border border-[var(--line)] bg-white/70 px-3 py-2">
+                <div key={event.id} className="sticker rounded-md bg-white px-3 py-2">
                   <p className="text-sm font-semibold">{event.eventType}</p>
                   <p className="mt-1 text-xs text-[var(--ink-2)]">
                     {event.actor.name} - {new Date(event.createdAt).toLocaleString()}

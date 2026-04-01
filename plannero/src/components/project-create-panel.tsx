@@ -46,26 +46,26 @@ export function ProjectCreatePanel({ workspaceSlug }: { workspaceSlug: string })
 
   return (
     <AppFrame title="New Project" subtitle="Define a scope with a stable key and mission.">
-      <form onSubmit={createProject} className="surface max-w-xl rounded-2xl p-6">
-        <label htmlFor="project-key" className="text-sm text-[var(--ink-2)]">
+      <form onSubmit={createProject} className="surface max-w-xl rounded-[16px] p-6">
+        <label htmlFor="project-key" className="caption-kicker">
           Project key
         </label>
         <input
           id="project-key"
           value={key}
           onChange={(event) => setKey(event.target.value.toUpperCase())}
-          className="mt-2 w-full rounded-xl border border-[var(--line)] bg-white/80 px-4 py-3"
+          className="brutal-input mt-2 w-full rounded-md px-4 py-3"
         />
-        <label htmlFor="project-name" className="mt-4 text-sm text-[var(--ink-2)]">
+        <label htmlFor="project-name" className="caption-kicker mt-4 block">
           Name
         </label>
         <input
           id="project-name"
           value={name}
           onChange={(event) => setName(event.target.value)}
-          className="mt-2 w-full rounded-xl border border-[var(--line)] bg-white/80 px-4 py-3"
+          className="brutal-input mt-2 w-full rounded-md px-4 py-3"
         />
-        <label htmlFor="project-description" className="mt-4 text-sm text-[var(--ink-2)]">
+        <label htmlFor="project-description" className="caption-kicker mt-4 block">
           Description
         </label>
         <textarea
@@ -73,9 +73,9 @@ export function ProjectCreatePanel({ workspaceSlug }: { workspaceSlug: string })
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           rows={4}
-          className="mt-2 w-full rounded-xl border border-[var(--line)] bg-white/80 px-4 py-3"
+          className="brutal-input mt-2 w-full rounded-md px-4 py-3"
         />
-        <button type="submit" className="mt-5 rounded-xl bg-[var(--accent-1)] px-4 py-2 text-white">
+        <button type="submit" className="brutal-button mt-5 rounded-md px-4 py-2">
           Create project
         </button>
         {message ? <p className="mt-3 text-sm text-red-700">{message}</p> : null}

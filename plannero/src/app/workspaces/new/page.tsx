@@ -35,15 +35,15 @@ export default function NewWorkspacePage() {
 
   return (
     <AppFrame title="Create Workspace" subtitle="Start a dedicated space for your team.">
-      <form onSubmit={submit} className="surface max-w-xl rounded-2xl p-6">
-        <label htmlFor="workspace-name" className="text-sm text-[var(--ink-2)]">
+      <form onSubmit={submit} className="surface max-w-xl rounded-[16px] p-6">
+        <label htmlFor="workspace-name" className="caption-kicker">
           Workspace name
         </label>
         <input
           id="workspace-name"
           value={name}
           onChange={(event) => setName(event.target.value)}
-          className="mt-2 w-full rounded-xl border border-[var(--line)] bg-white/80 px-4 py-3"
+          className="brutal-input mt-2 w-full rounded-md px-4 py-3"
           minLength={2}
           maxLength={80}
           required
@@ -52,7 +52,7 @@ export default function NewWorkspacePage() {
         <button
           type="submit"
           disabled={loading}
-          className="mt-5 rounded-xl bg-[var(--accent-2)] px-4 py-2 text-white disabled:opacity-50"
+          className="brutal-button mt-5 rounded-md px-4 py-2"
         >
           {loading ? "Creating..." : "Create Workspace"}
         </button>

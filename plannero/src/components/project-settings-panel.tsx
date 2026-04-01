@@ -69,17 +69,17 @@ export function ProjectSettingsPanel({
   return (
     <AppFrame title="Project Settings" subtitle="Keep naming and scope clean.">
       <div className="grid gap-4">
-        <div className="surface rounded-2xl p-6">
-          <label htmlFor="project-name" className="text-sm text-[var(--ink-2)]">
+        <div className="surface rounded-[14px] p-6">
+          <label htmlFor="project-name" className="caption-kicker">
             Name
           </label>
           <input
             id="project-name"
             value={name}
             onChange={(event) => setName(event.target.value)}
-            className="mt-2 w-full rounded-xl border border-[var(--line)] bg-white/80 px-4 py-3"
+            className="brutal-input mt-2 w-full rounded-md px-4 py-3"
           />
-          <label htmlFor="project-description" className="mt-4 block text-sm text-[var(--ink-2)]">
+          <label htmlFor="project-description" className="caption-kicker mt-4 block">
             Description
           </label>
           <textarea
@@ -87,15 +87,19 @@ export function ProjectSettingsPanel({
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             rows={4}
-            className="mt-2 w-full rounded-xl border border-[var(--line)] bg-white/80 px-4 py-3"
+            className="brutal-input mt-2 w-full rounded-md px-4 py-3"
           />
-          <button type="button" onClick={save} className="mt-4 rounded-xl bg-[var(--accent-2)] px-4 py-2 text-white">
+          <button type="button" onClick={save} className="brutal-button mt-4 rounded-md px-4 py-2">
             Save changes
           </button>
         </div>
-        <div className="surface rounded-2xl p-6">
+        <div className="surface rounded-[14px] p-6">
           <p className="text-sm text-[var(--ink-2)]">Archive this project to hide it from active planning views.</p>
-          <button type="button" onClick={archive} className="mt-3 rounded-xl bg-[var(--accent-1)] px-4 py-2 text-white">
+          <button
+            type="button"
+            onClick={archive}
+            className="brutal-button mt-3 rounded-md bg-[#11110f] px-4 py-2"
+          >
             Archive project
           </button>
         </div>

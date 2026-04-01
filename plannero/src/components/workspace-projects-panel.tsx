@@ -50,7 +50,7 @@ export function WorkspaceProjectsPanel({ workspaceSlug }: { workspaceSlug: strin
         workspace ? (
           <Link
             href={`/workspaces/${workspace.slug}/projects/new`}
-            className="rounded-xl bg-[var(--accent-2)] px-4 py-2 text-sm text-white"
+            className="brutal-button rounded-md px-4 py-2 text-sm"
           >
             New Project
           </Link>
@@ -65,9 +65,9 @@ export function WorkspaceProjectsPanel({ workspaceSlug }: { workspaceSlug: strin
             <Link
               key={project.id}
               href={`/workspaces/${workspaceSlug}/projects/${project.key}`}
-              className="surface rounded-2xl p-5 transition hover:-translate-y-0.5"
+              className="surface rounded-[14px] p-5 transition"
             >
-              <p className="text-xs uppercase tracking-[0.18em] text-[var(--ink-2)]">{project.key}</p>
+              <p className="caption-kicker">{project.key}</p>
               <h2 className="title-display mt-2 text-2xl">{project.name}</h2>
               <p className="mt-2 text-sm text-[var(--ink-2)]">{project.description ?? "No description"}</p>
             </Link>

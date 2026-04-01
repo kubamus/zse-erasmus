@@ -173,7 +173,7 @@ export function BoardCanvas({
       actions={
         <Link
           href={`/workspaces/${workspaceSlug}/projects/${projectKey}/issues`}
-          className="rounded-xl border border-[var(--line)] px-4 py-2 text-sm"
+          className="brutal-button-secondary rounded-md px-4 py-2 text-sm"
         >
           Issue List
         </Link>
@@ -184,15 +184,15 @@ export function BoardCanvas({
       ) : (
         <div className="grid gap-4 lg:grid-flow-col lg:auto-cols-[minmax(260px,1fr)]">
           {columnsSorted.map((column) => (
-            <div key={column.id} className="surface rounded-2xl p-4">
+            <div key={column.id} className="surface rounded-[14px] p-4">
               <div className="flex items-center justify-between">
                 <h2 className="title-display text-2xl">{column.name}</h2>
-                <span className="text-xs uppercase tracking-[0.14em] text-[var(--ink-2)]">
+                <span className="caption-kicker">
                   {issues.filter((issue) => issue.columnId === column.id).length}
                 </span>
               </div>
               <ul
-                className="mt-3 grid min-h-20 gap-2 rounded-xl border border-dashed border-transparent p-1 transition hover:border-[var(--line)]"
+                className="mt-3 grid min-h-20 gap-2 rounded-md border-2 border-dashed border-transparent p-1 transition hover:border-[var(--line-strong)]"
                 onDragOver={(event) => event.preventDefault()}
                 onDrop={(event) => {
                   event.preventDefault();
@@ -213,8 +213,8 @@ export function BoardCanvas({
                         event.preventDefault();
                         void moveIssueToColumn(column.id, issue.id);
                       }}
-                      className="rounded-xl border border-[var(--line)] bg-white/80 px-3 py-3"
-                    >
+                       className="sticker rounded-md bg-white px-3 py-3"
+                     >
                       <Link href={`/workspaces/${workspaceSlug}/projects/${projectKey}/issues/${issue.id}`}>
                         <p className="font-semibold">#{issue.issueNumber} {issue.title}</p>
                         <p className="mt-1 text-xs uppercase tracking-[0.12em] text-[var(--ink-2)]">
@@ -229,7 +229,7 @@ export function BoardCanvas({
                   value={newIssueTitle}
                   onChange={(event) => setNewIssueTitle(event.target.value)}
                   placeholder="Quick issue title"
-                  className="rounded-xl border border-[var(--line)] bg-white/80 px-3 py-2"
+                  className="brutal-input rounded-md px-3 py-2"
                 />
                 <div className="grid grid-cols-2 gap-2">
                   <select
@@ -237,7 +237,7 @@ export function BoardCanvas({
                     onChange={(event) =>
                       setNewIssueType(event.target.value as "task" | "bug" | "story" | "chore")
                     }
-                    className="rounded-xl border border-[var(--line)] bg-white/80 px-3 py-2 text-sm"
+                    className="brutal-input rounded-md px-3 py-2 text-sm"
                   >
                     <option value="task">task</option>
                     <option value="bug">bug</option>
@@ -251,7 +251,7 @@ export function BoardCanvas({
                         event.target.value as "low" | "medium" | "high" | "critical",
                       )
                     }
-                    className="rounded-xl border border-[var(--line)] bg-white/80 px-3 py-2 text-sm"
+                    className="brutal-input rounded-md px-3 py-2 text-sm"
                   >
                     <option value="low">low</option>
                     <option value="medium">medium</option>
@@ -262,26 +262,26 @@ export function BoardCanvas({
                 <button
                   type="button"
                   onClick={() => createIssue(column.id)}
-                  className="rounded-xl bg-[var(--accent-2)] px-3 py-2 text-sm text-white"
+                  className="brutal-button rounded-md px-3 py-2 text-sm"
                 >
                   Add issue
                 </button>
               </div>
             </div>
           ))}
-          <div className="surface rounded-2xl p-4">
+          <div className="surface rounded-[14px] p-4">
             <h2 className="title-display text-2xl">Add column</h2>
             <div className="mt-3 grid gap-2">
               <input
                 value={newColumnName}
                 onChange={(event) => setNewColumnName(event.target.value)}
                 placeholder="Column name"
-                className="rounded-xl border border-[var(--line)] bg-white/80 px-3 py-2"
+                className="brutal-input rounded-md px-3 py-2"
               />
               <button
                 type="button"
                 onClick={createColumn}
-                className="rounded-xl bg-[var(--accent-1)] px-3 py-2 text-sm text-white"
+                className="brutal-button rounded-md px-3 py-2 text-sm"
               >
                 Create column
               </button>

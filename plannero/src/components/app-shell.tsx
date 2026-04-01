@@ -12,8 +12,6 @@ type AppShellProps = {
 
 const NAV_ITEMS = [
   { href: "/workspaces", label: "Workspaces" },
-  { href: "/workspaces/new", label: "Create Workspace" },
-  { href: "/test", label: "API Playground" },
   { href: "/logout", label: "Logout" },
 ];
 
@@ -24,47 +22,76 @@ function matchPath(current: string, href: string) {
   return current === href;
 }
 
-export function AppShell({ title, subtitle, actions, children }: AppShellProps) {
+export function AppShell({
+  title,
+  subtitle,
+  actions,
+  children,
+}: AppShellProps) {
   const pathname = usePathname();
 
   return (
     <div className="grain app-shell">
-      <aside className="app-sidebar hidden p-4 lg:flex lg:flex-col">
-        <div className="surface rounded-2xl p-4">
-          <p className="text-xs uppercase tracking-[0.22em] text-[var(--ink-2)]">Plannero</p>
-          <h2 className="title-display mt-2 text-2xl">Team OS</h2>
-          <p className="mt-1 text-xs text-[var(--ink-2)]">Boards, issues, velocity.</p>
-        </div>
-        <nav className="mt-4 grid gap-1 text-sm">
-          {NAV_ITEMS.map((item) => {
-            const active = matchPath(pathname, item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`nav-item rounded-xl px-3 py-2 ${active ? "nav-item-active" : ""}`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
-      </aside>
+      <div className="relative w-full rounded-[34px] border-2 border-[var(--line-strong)] bg-[rgba(255,255,255,0.56)] p-3 shadow-[12px_12px_0_rgba(17,17,15,0.15)] sm:p-5">
+        <div className="pointer-events-none absolute -bottom-14 left-[52%] h-44 w-44 -translate-x-1/2 rounded-[36%_64%_68%_32%/35%_26%_74%_65%] bg-[var(--accent-pink)] opacity-70" />
+        <div className="pointer-events-none absolute right-6 top-20 h-3.5 w-3.5 border-2 border-[var(--line-strong)] bg-[var(--accent-yellow)]" />
 
-      <div className="min-w-0">
-        <header className="app-topbar px-4 py-3 sm:px-6">
-          <div className="mx-auto flex max-w-[1320px] flex-wrap items-center justify-between gap-3">
-            <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-2)]">Workspace</p>
-              <h1 className="title-display text-3xl leading-none sm:text-4xl">{title}</h1>
-              {subtitle ? <p className="mt-1 text-sm text-[var(--ink-2)]">{subtitle}</p> : null}
+        <header className="app-topbar rounded-[22px] px-4 py-4 sm:px-6">
+          <div className="grid items-center gap-4 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-8 w-8 items-center justify-center border-2 border-[var(--line-strong)] bg-[var(--accent-yellow)] text-[10px] font-black">
+                P
+              </span>
+              <div>
+                <p className="caption-kicker">Plannero</p>
+                <p className="text-sm font-semibold">
+                  Best app for task management
+                </p>
+              </div>
             </div>
-            <div className="flex items-center gap-2">{actions}</div>
+
+            <nav className="flex flex-wrap items-center justify-center gap-2 text-[11px] sm:text-xs lg:flex-nowrap lg:justify-self-center">
+              {NAV_ITEMS.map((item) => {
+                const active = matchPath(pathname, item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`nav-item rounded-md px-2.5 py-1.5 sm:px-4 sm:py-2 ${active ? "nav-item-active" : ""}`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            <div className="flex min-h-[40px] flex-wrap items-center justify-end gap-2 lg:justify-self-end">
+              {actions}
+            </div>
+          </div>
+
+          <div className="mt-5 grid items-end gap-3 border-t-2 border-[rgba(17,17,15,0.2)] pt-4 sm:grid-cols-[1fr_auto]">
+            <div>
+              <p className="caption-kicker">Workspace</p>
+              <h1 className="title-display text-4xl leading-[0.9] sm:text-5xl">
+                {title}
+              </h1>
+              {subtitle ? (
+                <p className="mt-2 max-w-2xl text-sm text-[var(--ink-2)]">
+                  {subtitle}
+                </p>
+              ) : null}
+            </div>
+            <p className="sticker inline-flex items-center rounded-md bg-[var(--accent-lime)] px-3 py-1.5 text-xs font-semibold text-[#090909]">
+              Build -&gt; Review -&gt; Ship
+            </p>
           </div>
         </header>
 
-        <main className="px-4 py-5 sm:px-6 sm:py-6">
-          <div className="mx-auto max-w-[1320px]">{children}</div>
+        <main className="mt-4">
+          <section className="min-w-0 rounded-[20px] border-2 border-[var(--line-strong)] bg-[rgba(255,255,255,0.54)] p-3 sm:p-5">
+            {children}
+          </section>
         </main>
       </div>
     </div>

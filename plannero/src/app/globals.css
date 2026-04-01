@@ -1,17 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --ink-1: #111827;
-  --ink-2: #4b5563;
-  --paper: #f4f7fb;
-  --paper-strong: #e9eef6;
-  --line: rgba(17, 24, 39, 0.12);
-  --accent-1: #2563eb;
-  --accent-2: #0f766e;
-  --accent-3: #f97316;
-  --haze-1: rgba(37, 99, 235, 0.22);
-  --haze-2: rgba(15, 118, 110, 0.18);
-  --haze-3: rgba(249, 115, 22, 0.16);
+  --ink-1: #11110f;
+  --ink-2: #474541;
+  --paper: #f1ede7;
+  --paper-strong: #ebe5dd;
+  --line: rgba(17, 17, 15, 0.22);
+  --line-strong: #11110f;
+  --accent-1: #6f3cff;
+  --accent-2: #0c7a43;
+  --accent-3: #1463ff;
+  --accent-yellow: #f2cb3f;
+  --accent-lime: #b8f57a;
+  --accent-pink: #efb8df;
+  --haze-1: rgba(111, 60, 255, 0.19);
+  --haze-2: rgba(242, 203, 63, 0.16);
+  --haze-3: rgba(12, 122, 67, 0.14);
 }
 
 * {
@@ -27,13 +31,31 @@ body {
   color: var(--ink-1);
   font-family: var(--font-body), sans-serif;
   background:
-    radial-gradient(980px 560px at 100% -10%, var(--haze-1), transparent 55%),
-    radial-gradient(900px 520px at -10% 100%, var(--haze-2), transparent 50%),
-    radial-gradient(760px 360px at 40% 0%, var(--haze-3), transparent 56%),
+    radial-gradient(900px 600px at 98% -8%, var(--haze-1), transparent 60%),
+    radial-gradient(780px 560px at -5% 102%, var(--haze-2), transparent 60%),
+    radial-gradient(700px 480px at 35% -12%, var(--haze-3), transparent 62%),
     linear-gradient(180deg, var(--paper), var(--paper-strong));
   min-height: 100%;
   line-height: 1.5;
   cursor: default;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.32;
+  background-image:
+    linear-gradient(to right, rgba(17, 17, 15, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 17, 15, 0.08) 1px, transparent 1px);
+  background-size: 112px 112px;
+  z-index: -2;
+}
+
+::selection {
+  background: var(--accent-yellow);
+  color: #090909;
 }
 
 .grain {
@@ -45,97 +67,105 @@ body {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.14;
-  background-image: radial-gradient(var(--line) 0.6px, transparent 0.6px);
-  background-size: 4px 4px;
+  opacity: 0.08;
+  background-image: radial-gradient(var(--line-strong) 0.55px, transparent 0.55px);
+  background-size: 3px 3px;
+  z-index: 60;
 }
 
 .card {
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.52));
-  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.68);
+  border: 2px solid var(--line-strong);
   box-shadow:
-    0 24px 70px rgba(16, 19, 32, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  transition: box-shadow 160ms ease, transform 160ms ease;
+    8px 8px 0 rgba(17, 17, 15, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(2px);
+  transition: box-shadow 180ms ease, transform 180ms ease, background 180ms ease;
 }
 
 .card:hover {
   box-shadow:
-    0 26px 82px rgba(16, 19, 32, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    12px 12px 0 rgba(17, 17, 15, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  transform: translate(-2px, -2px);
 }
 
 .title-display {
   font-family: var(--font-display), sans-serif;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.035em;
   text-wrap: balance;
 }
 
 .soft-pill {
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.62);
-  backdrop-filter: blur(6px);
+  border: 2px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.76);
+  backdrop-filter: blur(2px);
 }
 
 .app-shell {
-  display: grid;
+  position: relative;
+  display: block;
   min-height: 100vh;
-  grid-template-columns: 84px 1fr;
-}
-
-@media (min-width: 1024px) {
-  .app-shell {
-    grid-template-columns: 270px 1fr;
-  }
+  padding: 14px;
 }
 
 .app-sidebar {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  border-right: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.54));
-  backdrop-filter: blur(8px);
+  border: 2px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: 8px 8px 0 rgba(17, 17, 15, 0.12);
 }
 
 .app-topbar {
   position: sticky;
-  top: 0;
+  top: 0.7rem;
   z-index: 20;
-  border-bottom: 1px solid var(--line);
-  background: rgba(244, 247, 251, 0.78);
-  backdrop-filter: blur(8px);
+  border: 2px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(4px);
+  box-shadow: 8px 8px 0 rgba(17, 17, 15, 0.14);
 }
 
 .nav-item {
-  border: 1px solid transparent;
+  border: 2px solid transparent;
   color: var(--ink-2);
+  font-weight: 700;
+  letter-spacing: 0.015em;
+  text-transform: uppercase;
 }
 
 .nav-item:hover {
-  border-color: var(--line);
-  background: rgba(255, 255, 255, 0.7);
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.88);
   color: var(--ink-1);
 }
 
 .nav-item-active {
-  border-color: rgba(37, 99, 235, 0.2);
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.16), rgba(15, 118, 110, 0.1));
-  color: #0f2f78;
+  border-color: var(--line-strong);
+  background: var(--accent-yellow);
+  color: #090909;
 }
 
 .surface {
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.78);
-  box-shadow: 0 20px 55px rgba(17, 24, 39, 0.07);
+  border: 2px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.74);
+  box-shadow:
+    8px 8px 0 rgba(17, 17, 15, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(2px);
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.surface:hover {
+  box-shadow:
+    12px 12px 0 rgba(17, 17, 15, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  transform: translate(-2px, -2px);
 }
 
 @keyframes rise-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -144,7 +174,7 @@ body {
 }
 
 .rise-in {
-  animation: rise-in 360ms ease both;
+  animation: rise-in 450ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .stagger-1 {
@@ -164,10 +194,73 @@ a,
 input,
 select,
 textarea {
-  transition: all 140ms ease;
+  transition: all 160ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 a:hover,
 button:hover {
-  transform: translateY(-1px);
+  transform: translate(-1px, -1px);
+}
+
+.brutal-input {
+  border: 2px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--ink-1);
+  box-shadow: 3px 3px 0 rgba(17, 17, 15, 0.08);
+}
+
+.brutal-input:focus-visible {
+  outline: none;
+  border-color: #090909;
+  box-shadow:
+    0 0 0 3px rgba(20, 99, 255, 0.2),
+    3px 3px 0 rgba(17, 17, 15, 0.1);
+}
+
+.brutal-button {
+  border: 2px solid #090909;
+  background: var(--accent-1);
+  color: #fff;
+  box-shadow: 4px 4px 0 rgba(17, 17, 15, 0.18);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.brutal-button:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 6px 6px 0 rgba(17, 17, 15, 0.2);
+}
+
+.brutal-button:disabled {
+  opacity: 0.62;
+  transform: none;
+  box-shadow: 2px 2px 0 rgba(17, 17, 15, 0.12);
+}
+
+.brutal-button-secondary {
+  border: 2px solid #090909;
+  background: rgba(255, 255, 255, 0.88);
+  color: #090909;
+  box-shadow: 4px 4px 0 rgba(17, 17, 15, 0.12);
+  font-weight: 700;
+}
+
+.headline-mark {
+  display: inline;
+  background: linear-gradient(180deg, transparent 0, transparent 10%, var(--accent-1) 10%, var(--accent-1) 88%, transparent 88%);
+  box-shadow: 7px 0 0 var(--accent-1), -7px 0 0 var(--accent-1);
+  color: #090909;
+}
+
+.sticker {
+  border: 2px solid #090909;
+  box-shadow: 4px 4px 0 rgba(17, 17, 15, 0.15);
+}
+
+.caption-kicker {
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  color: var(--ink-2);
 }
