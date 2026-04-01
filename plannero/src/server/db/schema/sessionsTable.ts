@@ -1,4 +1,5 @@
 import {
+  datetime,
   index,
   mysqlTable,
   text,
@@ -12,10 +13,11 @@ export const sessionsTable = mysqlTable(
   "session",
   {
     id: varchar("id", { length: 36 }).primaryKey(),
-    expiresAt: timestamp("expires_at", { fsp: 3 }).notNull(),
+    expiresAt: datetime("expires_at", { fsp: 3 }).notNull(),
     token: varchar("token", { length: 255 }).notNull().unique(),
     createdAt: timestamp("created_at", { fsp: 3 }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { fsp: 3 })
+      .defaultNow()
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
     ipAddress: text("ip_address"),

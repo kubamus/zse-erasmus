@@ -1,4 +1,5 @@
 import {
+  datetime,
   index,
   mysqlTable,
   text,
@@ -12,7 +13,7 @@ export const verificationTable = mysqlTable(
     id: varchar("id", { length: 36 }).primaryKey(),
     identifier: varchar("identifier", { length: 255 }).notNull(),
     value: text("value").notNull(),
-    expiresAt: timestamp("expires_at", { fsp: 3 }).notNull(),
+    expiresAt: datetime("expires_at", { fsp: 3 }).notNull(),
     createdAt: timestamp("created_at", { fsp: 3 }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { fsp: 3 })
       .defaultNow()

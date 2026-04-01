@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -39,15 +40,23 @@ export function AppShell({
         <header className="app-topbar rounded-[22px] px-4 py-4 sm:px-6">
           <div className="grid items-center gap-4 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
             <div className="flex items-center gap-3">
-              <span className="inline-flex h-8 w-8 items-center justify-center border-2 border-[var(--line-strong)] bg-[var(--accent-yellow)] text-[10px] font-black">
-                P
-              </span>
-              <div>
-                <p className="caption-kicker">Plannero</p>
-                <p className="text-sm font-semibold">
-                  Best app for task management
-                </p>
-              </div>
+              <Link
+                href="/workspaces"
+                aria-label="Plannero home"
+                className="sticker inline-flex rounded-md border-2 border-[var(--line-strong)] bg-[#e0d0b7] px-2 py-1.5"
+              >
+                <Image
+                  src="/plannero.png"
+                  alt="Plannero"
+                  width={420}
+                  height={130}
+                  priority
+                  className="h-auto w-[110px] sm:w-[130px]"
+                />
+              </Link>
+              <p className="hidden text-sm font-semibold text-[var(--ink-2)] xl:block">
+                Best app for task management
+              </p>
             </div>
 
             <nav className="flex flex-wrap items-center justify-center gap-2 text-[11px] sm:text-xs lg:flex-nowrap lg:justify-self-center">

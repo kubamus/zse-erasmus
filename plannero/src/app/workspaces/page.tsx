@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AppFrame } from "@/components/app-frame";
@@ -41,12 +42,23 @@ export default function WorkspacesPage() {
       title="Workspaces"
       subtitle="Pick your context and keep teams moving."
       actions={
-        <Link
-          href="/workspaces/new"
-          className="brutal-button inline-flex items-center rounded-md px-4 py-2 text-sm"
-        >
-          New Workspace
-        </Link>
+        <>
+          <div className="sticker inline-flex rounded-md border-2 border-[var(--line-strong)] bg-[#e0d0b7] px-2 py-1.5">
+            <Image
+              src="/plannero.png"
+              alt="Plannero"
+              width={520}
+              height={160}
+              className="h-auto w-[110px] sm:w-[130px]"
+            />
+          </div>
+          <Link
+            href="/workspaces/new"
+            className="brutal-button inline-flex items-center rounded-md px-4 py-2 text-sm"
+          >
+            New Workspace
+          </Link>
+        </>
       }
     >
       {loading ? (

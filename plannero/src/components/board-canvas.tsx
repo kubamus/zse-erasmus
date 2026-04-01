@@ -26,6 +26,47 @@ function computeBetween(previous: number | null, next: number | null) {
   return (previous + next) / 2;
 }
 
+function getIssueToneClass(columnName: string) {
+  const name = columnName.trim().toLowerCase();
+
+  if (
+    name.includes("done") ||
+    name.includes("closed") ||
+    name.includes("resolved") ||
+    name.includes("finished")
+  ) {
+    return "bg-[#d7f7d4]";
+  }
+
+  if (
+    name.includes("review") ||
+    name.includes("qa") ||
+    name.includes("test") ||
+    name.includes("verify")
+  ) {
+    return "bg-[#fff2b8]";
+  }
+
+  if (
+    name.includes("progress") ||
+    name.includes("doing") ||
+    name.includes("wip") ||
+    name.includes("develop")
+  ) {
+    return "bg-[#dce8ff]";
+  }
+
+  if (name.includes("backlog") || name.includes("todo") || name.includes("to do")) {
+    return "bg-[#eef0f3]";
+  }
+
+  if (name.includes("block") || name.includes("stuck")) {
+    return "bg-[#ffdede]";
+  }
+
+  return "bg-white";
+}
+
 export function BoardCanvas({
   workspaceSlug,
   projectKey,
@@ -203,18 +244,18 @@ export function BoardCanvas({
                   .filter((issue) => issue.columnId === column.id)
                   .sort((a, b) => a.position - b.position)
                   .map((issue) => (
-                    <li
-                      key={issue.id}
-                      draggable
-                      onDragStart={() => setDraggingIssueId(issue.id)}
-                      onDragEnd={() => setDraggingIssueId(null)}
-                      onDragOver={(event) => event.preventDefault()}
-                      onDrop={(event) => {
-                        event.preventDefault();
-                        void moveIssueToColumn(column.id, issue.id);
-                      }}
-                       className="sticker rounded-md bg-white px-3 py-3"
-                     >
+                      <li
+                        key={issue.id}
+                        draggable
+                        onDragStart={() => setDraggingIssueId(issue.id)}
+                        onDragEnd={() => setDraggingIssueId(null)}
+                        onDragOver={(event) => event.preventDefault()}
+                        onDrop={(event) => {
+                          event.preventDefault();
+                          void moveIssueToColumn(column.id, issue.id);
+                        }}
+                        className={`sticker rounded-md px-3 py-3 ${getIssueToneClass(column.name)}`}
+                      >
                       <Link href={`/workspaces/${workspaceSlug}/projects/${projectKey}/issues/${issue.id}`}>
                         <p className="font-semibold">#{issue.issueNumber} {issue.title}</p>
                         <p className="mt-1 text-xs uppercase tracking-[0.12em] text-[var(--ink-2)]">

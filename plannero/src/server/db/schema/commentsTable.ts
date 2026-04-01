@@ -1,4 +1,5 @@
 import {
+  datetime,
   index,
   mysqlTable,
   text,
@@ -25,7 +26,7 @@ export const commentsTable = mysqlTable(
       .defaultNow()
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
-    deletedAt: timestamp("deleted_at", { fsp: 3 }),
+    deletedAt: datetime("deleted_at", { fsp: 3 }),
   },
   (table) => [
     index("comment_issueId_createdAt_idx").on(table.issueId, table.createdAt),
