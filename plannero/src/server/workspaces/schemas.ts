@@ -10,7 +10,7 @@ export const updateWorkspaceRequestSchema = z.object({
 });
 
 export const createWorkspaceMemberRequestSchema = z.object({
-  userId: z.string().uuid(),
+  email: z.string().email().trim().toLowerCase(),
   role: z.enum(workspaceRoleValues),
 });
 

@@ -6,7 +6,34 @@ import {
 } from "@/server/access/workspaceAccess";
 import { badRequest, notFound } from "@/server/api/errors";
 import { db } from "@/server/db";
-import { boardColumnsTable, issuesTable } from "@/server/db/schema";
+import { boardColumnsTable, boardsTable, issuesTable } from "@/server/db/schema";
+
+async function ensureColumnOptionsAllowedForBoard(
+  boardId: string,
+  input: { wipLimit?: number | null; isDoneColumn?: boolean },
+) {
+  const [board] = await db
+    .select({ type: boardsTable.type })
+    .from(boardsTable)
+    .where(eq(boardsTable.id, boardId))
+    .limit(1);
+
+  if (!board) {
+    throw notFound();
+  }
+
+  if (board.type === "scrum") {
+    if (input.wipLimit !== undefined && input.wipLimit !== null) {
+      throw badRequest("WIP limit is available only for kanban boards", "invalid_column_option");
+    }
+
+    if (input.isDoneColumn === true) {
+      throw badRequest("Done-column flag is available only for kanban boards", "invalid_column_option");
+    }
+  }
+
+  return board;
+}
 
 export async function listBoardColumns(boardId: string, userId: string) {
   await requireBoardAccess(boardId, userId);
@@ -29,6 +56,7 @@ export async function createBoardColumn(
 ) {
   const access = await requireBoardAccess(boardId, userId);
   ensureWorkspaceWrite(access.role);
+  await ensureColumnOptionsAllowedForBoard(boardId, input);
 
   if (input.isDoneColumn) {
     const [done] = await db
@@ -96,6 +124,7 @@ export async function updateBoardColumn(
 
   const access = await requireBoardAccess(column.boardId, userId);
   ensureWorkspaceWrite(access.role);
+  await ensureColumnOptionsAllowedForBoard(column.boardId, input);
 
   if (input.isDoneColumn) {
     const [done] = await db

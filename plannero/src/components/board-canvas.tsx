@@ -87,7 +87,10 @@ export function BoardCanvas({
     "low" | "medium" | "high" | "critical"
   >("medium");
   const [draggingIssueId, setDraggingIssueId] = useState<string | null>(null);
+  const [activeDropColumnId, setActiveDropColumnId] = useState<string | null>(null);
+  const [activeBeforeIssueId, setActiveBeforeIssueId] = useState<string | null>(null);
   const [moving, setMoving] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
@@ -131,7 +134,7 @@ export function BoardCanvas({
 
   async function createIssue(columnId: string) {
     if (!project || !board) return;
-    await apiRequest(`/projects/${project.id}/issues`, {
+    const response = await apiRequest<{ message?: string }>(`/projects/${project.id}/issues`, {
       method: "POST",
       body: JSON.stringify({
         boardId: board.id,
@@ -141,7 +144,14 @@ export function BoardCanvas({
         priority: newIssuePriority,
       }),
     });
+
+    if (!response.ok) {
+      setMessage(response.data?.message ?? "Could not create issue");
+      return;
+    }
+
     setNewIssueTitle("");
+    setMessage(null);
     await load();
   }
 
@@ -151,7 +161,7 @@ export function BoardCanvas({
     const last = sorted.at(-1);
     const nextPosition = Number(last?.position ?? 0) + 1024;
 
-    await apiRequest(`/boards/${board.id}/columns`, {
+    const response = await apiRequest<{ message?: string }>(`/boards/${board.id}/columns`, {
       method: "POST",
       body: JSON.stringify({
         name: newColumnName,
@@ -159,7 +169,27 @@ export function BoardCanvas({
       }),
     });
 
+    if (!response.ok) {
+      setMessage(response.data?.message ?? "Could not create column");
+      return;
+    }
+
     setNewColumnName("");
+    setMessage(null);
+    await load();
+  }
+
+  async function deleteColumn(columnId: string) {
+    const response = await apiRequest<{ message?: string }>(`/columns/${columnId}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      setMessage(response.data?.message ?? "Could not delete column");
+      return;
+    }
+
+    setMessage("Column deleted");
     await load();
   }
 
@@ -190,15 +220,25 @@ export function BoardCanvas({
     const position = computeBetween(previous, next);
 
     setMoving(true);
-    await apiRequest(`/issues/${draggingIssueId}/move`, {
+    const response = await apiRequest<{ message?: string }>(`/issues/${draggingIssueId}/move`, {
       method: "POST",
       body: JSON.stringify({
         toColumnId: targetColumnId,
         position,
       }),
     });
+
+    if (!response.ok) {
+      setMessage(response.data?.message ?? "Could not move issue");
+      setMoving(false);
+      return;
+    }
+
     setDraggingIssueId(null);
+    setActiveDropColumnId(null);
+    setActiveBeforeIssueId(null);
     setMoving(false);
+    setMessage(null);
     await load();
   }
 
@@ -223,116 +263,165 @@ export function BoardCanvas({
       {loading ? (
         <div className="surface rounded-2xl p-6">Loading board...</div>
       ) : (
-        <div className="grid gap-4 lg:grid-flow-col lg:auto-cols-[minmax(260px,1fr)]">
-          {columnsSorted.map((column) => (
-            <div key={column.id} className="surface rounded-[14px] p-4">
-              <div className="flex items-center justify-between">
-                <h2 className="title-display text-2xl">{column.name}</h2>
-                <span className="caption-kicker">
-                  {issues.filter((issue) => issue.columnId === column.id).length}
-                </span>
-              </div>
-              <ul
-                className="mt-3 grid min-h-20 gap-2 rounded-md border-2 border-dashed border-transparent p-1 transition hover:border-[var(--line-strong)]"
-                onDragOver={(event) => event.preventDefault()}
-                onDrop={(event) => {
-                  event.preventDefault();
-                  void moveIssueToColumn(column.id);
-                }}
+        <div className="overflow-x-auto pb-2">
+          <div className="flex min-w-max gap-4">
+            {columnsSorted.map((column) => (
+              <div
+                key={column.id}
+                className={`surface w-[280px] rounded-[14px] p-4 transition sm:w-[320px] ${
+                  activeDropColumnId === column.id ? "ring-2 ring-[var(--line-strong)]" : ""
+                }`}
               >
-                {issues
-                  .filter((issue) => issue.columnId === column.id)
-                  .sort((a, b) => a.position - b.position)
-                  .map((issue) => (
+                <div className="flex items-center justify-between">
+                  <h2 className="title-display text-2xl">{column.name}</h2>
+                  <div className="flex items-center gap-2">
+                    <span className="caption-kicker">
+                      {issues.filter((issue) => issue.columnId === column.id).length}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => deleteColumn(column.id)}
+                      className="brutal-button-secondary rounded-md px-2 py-1 text-xs"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+
+                <ul
+                  className={`mt-3 grid min-h-20 gap-2 rounded-md border-2 border-dashed p-1 transition ${
+                    activeDropColumnId === column.id && !activeBeforeIssueId
+                      ? "border-[var(--line-strong)] bg-white/70"
+                      : "border-transparent"
+                  }`}
+                  onDragOver={(event) => event.preventDefault()}
+                  onDragEnter={(event) => {
+                    event.preventDefault();
+                    setActiveDropColumnId(column.id);
+                    setActiveBeforeIssueId(null);
+                  }}
+                  onDrop={(event) => {
+                    event.preventDefault();
+                    void moveIssueToColumn(column.id);
+                  }}
+                >
+                  {issues
+                    .filter((issue) => issue.columnId === column.id)
+                    .sort((a, b) => a.position - b.position)
+                    .map((issue) => (
                       <li
                         key={issue.id}
                         draggable
-                        onDragStart={() => setDraggingIssueId(issue.id)}
-                        onDragEnd={() => setDraggingIssueId(null)}
+                        onDragStart={() => {
+                          setDraggingIssueId(issue.id);
+                          setActiveDropColumnId(column.id);
+                          setActiveBeforeIssueId(null);
+                        }}
+                        onDragEnd={() => {
+                          setDraggingIssueId(null);
+                          setActiveDropColumnId(null);
+                          setActiveBeforeIssueId(null);
+                        }}
                         onDragOver={(event) => event.preventDefault()}
+                        onDragEnter={(event) => {
+                          event.preventDefault();
+                          setActiveDropColumnId(column.id);
+                          setActiveBeforeIssueId(issue.id);
+                        }}
                         onDrop={(event) => {
                           event.preventDefault();
                           void moveIssueToColumn(column.id, issue.id);
                         }}
-                        className={`sticker rounded-md px-3 py-3 ${getIssueToneClass(column.name)}`}
+                        className={`sticker rounded-md px-3 py-3 transition ${getIssueToneClass(column.name)} ${
+                          draggingIssueId === issue.id ? "scale-[0.98] opacity-60" : ""
+                        } ${
+                          activeDropColumnId === column.id && activeBeforeIssueId === issue.id
+                            ? "border-t-4 border-[var(--line-strong)]"
+                            : ""
+                        }`}
                       >
-                      <Link href={`/workspaces/${workspaceSlug}/projects/${projectKey}/issues/${issue.id}`}>
-                        <p className="font-semibold">#{issue.issueNumber} {issue.title}</p>
-                        <p className="mt-1 text-xs uppercase tracking-[0.12em] text-[var(--ink-2)]">
-                          {issue.type} - {issue.priority}
-                        </p>
-                      </Link>
-                    </li>
-                  ))}
-              </ul>
-              <div className="mt-4 grid gap-2">
+                        <Link href={`/workspaces/${workspaceSlug}/projects/${projectKey}/issues/${issue.id}`}>
+                          <p className="font-semibold">#{issue.issueNumber} {issue.title}</p>
+                          <p className="mt-1 text-xs uppercase tracking-[0.12em] text-[var(--ink-2)]">
+                            {issue.type} - {issue.priority}
+                          </p>
+                        </Link>
+                      </li>
+                    ))}
+                </ul>
+
+                <div className="mt-4 grid gap-2">
+                  <input
+                    value={newIssueTitle}
+                    onChange={(event) => setNewIssueTitle(event.target.value)}
+                    placeholder="Quick issue title"
+                    className="brutal-input rounded-md px-3 py-2"
+                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <select
+                      value={newIssueType}
+                      onChange={(event) =>
+                        setNewIssueType(event.target.value as "task" | "bug" | "story" | "chore")
+                      }
+                      className="brutal-input rounded-md px-3 py-2 text-sm"
+                    >
+                      <option value="task">task</option>
+                      <option value="bug">bug</option>
+                      <option value="story">story</option>
+                      <option value="chore">chore</option>
+                    </select>
+                    <select
+                      value={newIssuePriority}
+                      onChange={(event) =>
+                        setNewIssuePriority(
+                          event.target.value as "low" | "medium" | "high" | "critical",
+                        )
+                      }
+                      className="brutal-input rounded-md px-3 py-2 text-sm"
+                    >
+                      <option value="low">low</option>
+                      <option value="medium">medium</option>
+                      <option value="high">high</option>
+                      <option value="critical">critical</option>
+                    </select>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => createIssue(column.id)}
+                    className="brutal-button rounded-md px-3 py-2 text-sm"
+                  >
+                    Add issue
+                  </button>
+                </div>
+              </div>
+            ))}
+            <div className="surface w-[280px] rounded-[14px] p-4 sm:w-[320px]">
+              <h2 className="title-display text-2xl">Add column</h2>
+              <div className="mt-3 grid gap-2">
                 <input
-                  value={newIssueTitle}
-                  onChange={(event) => setNewIssueTitle(event.target.value)}
-                  placeholder="Quick issue title"
+                  value={newColumnName}
+                  onChange={(event) => setNewColumnName(event.target.value)}
+                  placeholder="Column name"
                   className="brutal-input rounded-md px-3 py-2"
                 />
-                <div className="grid grid-cols-2 gap-2">
-                  <select
-                    value={newIssueType}
-                    onChange={(event) =>
-                      setNewIssueType(event.target.value as "task" | "bug" | "story" | "chore")
-                    }
-                    className="brutal-input rounded-md px-3 py-2 text-sm"
-                  >
-                    <option value="task">task</option>
-                    <option value="bug">bug</option>
-                    <option value="story">story</option>
-                    <option value="chore">chore</option>
-                  </select>
-                  <select
-                    value={newIssuePriority}
-                    onChange={(event) =>
-                      setNewIssuePriority(
-                        event.target.value as "low" | "medium" | "high" | "critical",
-                      )
-                    }
-                    className="brutal-input rounded-md px-3 py-2 text-sm"
-                  >
-                    <option value="low">low</option>
-                    <option value="medium">medium</option>
-                    <option value="high">high</option>
-                    <option value="critical">critical</option>
-                  </select>
-                </div>
                 <button
                   type="button"
-                  onClick={() => createIssue(column.id)}
+                  onClick={createColumn}
                   className="brutal-button rounded-md px-3 py-2 text-sm"
                 >
-                  Add issue
+                  Create column
                 </button>
               </div>
+              {moving ? (
+                <p className="mt-3 text-xs uppercase tracking-[0.12em] text-[var(--ink-2)]">
+                  Moving issue...
+                </p>
+              ) : null}
             </div>
-          ))}
-          <div className="surface rounded-[14px] p-4">
-            <h2 className="title-display text-2xl">Add column</h2>
-            <div className="mt-3 grid gap-2">
-              <input
-                value={newColumnName}
-                onChange={(event) => setNewColumnName(event.target.value)}
-                placeholder="Column name"
-                className="brutal-input rounded-md px-3 py-2"
-              />
-              <button
-                type="button"
-                onClick={createColumn}
-                className="brutal-button rounded-md px-3 py-2 text-sm"
-              >
-                Create column
-              </button>
-            </div>
-            {moving ? (
-              <p className="mt-3 text-xs uppercase tracking-[0.12em] text-[var(--ink-2)]">Moving issue...</p>
-            ) : null}
           </div>
         </div>
       )}
+      {message ? <p className="mt-3 text-sm text-[var(--ink-2)]">{message}</p> : null}
     </AppFrame>
   );
 }

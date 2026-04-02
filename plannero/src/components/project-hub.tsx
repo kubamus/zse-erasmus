@@ -21,11 +21,17 @@ type Board = {
   type: "kanban" | "scrum";
 };
 
-const BOARD_PRESETS: Array<{ name: string; position: number; isDoneColumn?: boolean }> = [
+const KANBAN_PRESETS: Array<{ name: string; position: number; isDoneColumn?: boolean }> = [
   { name: "Backlog", position: 1000 },
   { name: "In Progress", position: 2000 },
   { name: "Review", position: 3000 },
   { name: "Done", position: 4000, isDoneColumn: true },
+];
+
+const SCRUM_PRESETS: Array<{ name: string; position: number }> = [
+  { name: "To Do", position: 1000 },
+  { name: "In Progress", position: 2000 },
+  { name: "Done", position: 3000 },
 ];
 
 export function ProjectHub({
@@ -98,7 +104,9 @@ export function ProjectHub({
 
     const boardId = boardResponse.data.id;
 
-    for (const preset of BOARD_PRESETS) {
+    const boardPresets = newBoardType === "kanban" ? KANBAN_PRESETS : SCRUM_PRESETS;
+
+    for (const preset of boardPresets) {
       await apiRequest(`/boards/${boardId}/columns`, {
         method: "POST",
         body: JSON.stringify(preset),

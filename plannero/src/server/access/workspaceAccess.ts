@@ -13,7 +13,7 @@ import {
 export type WorkspaceRole = "owner" | "admin" | "member";
 
 export function ensureWorkspaceWrite(role: WorkspaceRole) {
-  if (role !== "owner" && role !== "admin") {
+  if (role !== "owner" && role !== "admin" && role !== "member") {
     throw forbidden();
   }
 }
