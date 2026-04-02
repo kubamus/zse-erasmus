@@ -38,7 +38,7 @@ export function AppShell({
         <div className="pointer-events-none absolute right-6 top-20 h-3.5 w-3.5 border-2 border-[var(--line-strong)] bg-[var(--accent-yellow)]" />
 
         <header className="app-topbar rounded-[22px] px-4 py-4 sm:px-6">
-          <div className="grid items-center gap-4 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
+          <div className="flex flex-wrap items-center gap-3 xl:grid xl:grid-cols-[auto_minmax(0,1fr)_auto] xl:gap-4">
             <div className="flex items-center gap-3">
               <Link
                 href="/workspaces"
@@ -59,22 +59,24 @@ export function AppShell({
               </p>
             </div>
 
-            <nav className="flex flex-wrap items-center justify-center gap-2 text-[11px] sm:text-xs lg:flex-nowrap lg:justify-self-center">
-              {NAV_ITEMS.map((item) => {
-                const active = matchPath(pathname, item.href);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`nav-item rounded-md px-2.5 py-1.5 sm:px-4 sm:py-2 ${active ? "nav-item-active" : ""}`}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
+            <div className="order-3 w-full overflow-x-auto xl:order-none xl:w-auto xl:overflow-visible">
+              <nav className="flex min-w-max items-center justify-start gap-2 text-[11px] sm:justify-center sm:text-xs xl:min-w-0 xl:justify-center">
+                {NAV_ITEMS.map((item) => {
+                  const active = matchPath(pathname, item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`nav-item rounded-md px-2.5 py-1.5 sm:px-4 sm:py-2 ${active ? "nav-item-active" : ""}`}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
 
-            <div className="flex min-h-[40px] flex-wrap items-center justify-end gap-2 lg:justify-self-end">
+            <div className="ml-auto flex min-h-[40px] flex-wrap items-center justify-end gap-2 xl:ml-0 xl:justify-self-end">
               {actions}
             </div>
           </div>
