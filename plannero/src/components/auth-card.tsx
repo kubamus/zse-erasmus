@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { authClient } from "@/lib/authClient";
 
@@ -12,8 +12,11 @@ type AuthCardProps = {
 
 export function AuthCard({ mode }: AuthCardProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const productActive = pathname === "/login" || pathname === "/signup";
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -62,10 +65,30 @@ export function AuthCard({ mode }: AuthCardProps) {
             />
           </Link>
           <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
-            <span className="nav-item nav-item-active rounded-md px-3 py-1.5">Product</span>
-            <span className="nav-item rounded-md px-3 py-1.5">About Us</span>
-            <span className="nav-item rounded-md px-3 py-1.5">Contact</span>
-            <span className="nav-item rounded-md px-3 py-1.5">More Info</span>
+            <Link
+              href="/login"
+              className={`nav-item rounded-md px-3 py-1.5 ${productActive ? "nav-item-active" : ""}`}
+            >
+              Product
+            </Link>
+            <Link
+              href="/about-us"
+              className={`nav-item rounded-md px-3 py-1.5 ${pathname === "/about-us" ? "nav-item-active" : ""}`}
+            >
+              About Us
+            </Link>
+            <Link
+              href="/contact"
+              className={`nav-item rounded-md px-3 py-1.5 ${pathname === "/contact" ? "nav-item-active" : ""}`}
+            >
+              Contact
+            </Link>
+            <Link
+              href="/more-info"
+              className={`nav-item rounded-md px-3 py-1.5 ${pathname === "/more-info" ? "nav-item-active" : ""}`}
+            >
+              More Info
+            </Link>
           </div>
         </div>
 
