@@ -6,8 +6,5 @@
     @section('content')
     @show
 
-    @section('custom_scripts')
-    @show
-
     
 @include('templates/footer')
