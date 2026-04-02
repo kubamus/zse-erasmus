@@ -18,6 +18,7 @@ Route::get('doctors', [DoctorsController::class, 'index'])->name('doctors.index'
 Route::get('departments', [DepartmentsController::class, 'index'])->name('departments.index');
 Route::get('specializations', [SpecializationController::class, 'index'])->name('specializations.index');
 Route::post('storedoctor', [DoctorsController::class, 'store'])->name('save-doctor');
+Route::post('deletedoctor', [DoctorsController::class, 'delete'])->name('delete-doctor');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

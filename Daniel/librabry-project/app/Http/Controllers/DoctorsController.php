@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Doctor;
+use App\Http\Requests\DoctorsRequest;
 use App\Models\Department;
+use App\Models\Doctor;
 use App\Models\Specialization;
+use Illuminate\Http\Request;
 
 class DoctorsController extends Controller
 {
@@ -15,26 +16,33 @@ class DoctorsController extends Controller
     {
         $this->model = new Doctor();
     }
+
     public function index()
     {
-        $doctors = $this->model->with(['specialization', 'department'] )->get();
+        $doctors = $this->model->with(['specialization', 'department'])->get();
         $departments = Department::all();
         $specializations = Specialization::all();
 
         return view('doctors.doctors', compact('doctors', 'departments', 'specializations'));
-
     }
 
-    public function store(Request $request) {
-        $newDoctor = $request->validate([
-            'name' => ['nullable', 'string', 'max:255'],
-            'lastname' => ['nullable', 'string', 'max:255'],
-            'phone_number' => ['nullable', 'string', 'max:45'],
-            'specialization_id' => ['nullable', 'exists:specializations,id'],
-            'department_id' => ['nullable', 'exists:departments,id'],
-        ]);
+    public function store(DoctorsRequest $request)
+    {
+        $newDoctor = $request->validated();
 
         $this->model->create($newDoctor);
+        return redirect()->back();
+    }
+
+    public function delete(Request $request)
+    {
+        $validated = $request->validate([
+            'doctor_id' => ['required', 'integer', 'exists:doctors,id'],
+        ]);
+
+        $doctor = $this->model->findOrFail($validated['doctor_id']);
+        $doctor->delete();
+
         return redirect()->back();
     }
 }

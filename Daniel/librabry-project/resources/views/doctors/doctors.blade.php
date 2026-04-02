@@ -13,6 +13,15 @@
             Create doctor
         </button>
 
+        @if ($errors->any())
+            <div class="alert alert-danger mt-3">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <table class="table table-resonsive">
             <thead>
                 <tr>
@@ -21,6 +30,7 @@
                     <th>lastname</th>
                     <th>specialization</th>
                     <th>department</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
 
@@ -32,6 +42,13 @@
                         <td>{{ $doctor->lastname }}</td>
                         <td>{{ $doctor->specialization?->specialization ?? 'N/A' }}</td>
                         <td>{{ $doctor->department?->department ?? 'N/A' }}</td>
+                        <td colspan="3">
+                            <form action="{{ route('delete-doctor') }}" method="POST" enctype="application/x-www-form-urlencoded">
+                                @csrf
+                                <input type="hidden" name="doctor_id" id="doctor_id" value="{{ $doctor->id }}">
+                                <button>Delete</button>
+                            </form>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
