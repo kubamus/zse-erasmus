@@ -1,0 +1,111 @@
+body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #f0f8ff;
+			color: #333;
+		}
+
+		header {
+			background-color: #0066cc;
+			color: #ffffff;
+			padding: 1.5rem;
+			text-align: center;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+
+		header h1 {
+			margin: 0;
+			font-size: 2rem;
+		}
+
+		nav {
+			background-color: #004c99;
+			display: flex;
+			justify-content: center;
+		}
+
+		nav a {
+			color: #ffffff;
+			text-decoration: none;
+			padding: 1rem 2rem;
+			font-weight: bold;
+			transition: background-color 0.3s;
+		}
+
+		nav a:hover {
+			background-color: #003366;
+		}
+
+		main {
+			max-width: 800px;
+			margin: 2rem auto;
+			padding: 2rem;
+			background-color: #ffffff;
+			border-radius: 8px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+			min-height: 50vh;
+		}
+
+		main h2 {
+			color: #0066cc;
+			border-bottom: 2px solid #e0e0e0;
+			padding-bottom: 0.5rem;
+			margin-top: 0;
+		}
+
+		.patient-card {
+			padding: 1rem;
+			margin-bottom: 1rem;
+			border: 1px solid #e0e0e0;
+			border-radius: 4px;
+			border-left: 4px solid #0066cc;
+			background-color: #fafafa;
+		}
+
+		.patient-card p {
+			margin: 0;
+			font-size: 1.1rem;
+		}
+
+		input[type="text"] {
+			padding: 0.5rem;
+			font-size: 1rem;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			font-family: inherit;
+			outline: none;
+			transition: border-color 0.3s, box-shadow 0.3s;
+		}
+
+		input[type="text"]:focus {
+			border-color: #0066cc;
+			box-shadow: 0 0 4px rgba(0, 102, 204, 0.3);
+		}
+
+		button {
+			background-color: #0066cc;
+			color: #ffffff;
+			border: none;
+			padding: 0.5rem 1rem;
+			font-size: 1rem;
+			border-radius: 4px;
+			cursor: pointer;
+			transition: background-color 0.3s;
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			font-weight: bold;
+		}
+
+		button:hover {
+			background-color: #004c99;
+		}
+
+		footer {
+			background-color: #333333;
+			color: #ffffff;
+			text-align: center;
+			padding: 1rem;
+			position: fixed;
+			bottom: 0;
+			width: 100%;
+		}
