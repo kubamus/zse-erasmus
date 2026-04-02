@@ -14,8 +14,9 @@ type WorkspaceMember = {
 export function WorkspaceMembersPanel({ workspaceSlug }: { workspaceSlug: string }) {
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [members, setMembers] = useState<WorkspaceMember[]>([]);
-  const [userId, setUserId] = useState("");
+  const [email, setEmail] = useState("");
   const [role, setRole] = useState<"owner" | "admin" | "member">("member");
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const reload = useCallback(async () => {
@@ -44,12 +45,34 @@ export function WorkspaceMembersPanel({ workspaceSlug }: { workspaceSlug: string
   }, [reload]);
 
   async function addMember() {
-    if (!workspace || !userId) return;
-    await apiRequest(`/workspaces/${workspace.id}/members`, {
-      method: "POST",
-      body: JSON.stringify({ userId, role }),
-    });
-    setUserId("");
+    if (!workspace || !email) return;
+
+    setError(null);
+
+    const response = await apiRequest<{ message?: string; code?: string }>(
+      `/workspaces/${workspace.id}/members`,
+      {
+        method: "POST",
+        body: JSON.stringify({ email, role }),
+      },
+    );
+
+    if (!response.ok) {
+      if (response.data?.code === "user_not_found") {
+        setError("No account exists for this email yet.");
+        return;
+      }
+
+      if (response.data?.code === "member_exists") {
+        setError("This user is already in the workspace.");
+        return;
+      }
+
+      setError(response.data?.message ?? "Could not add member");
+      return;
+    }
+
+    setEmail("");
     await reload();
   }
 
@@ -63,9 +86,10 @@ export function WorkspaceMembersPanel({ workspaceSlug }: { workspaceSlug: string
             <h2 className="title-display text-2xl">Invite member</h2>
             <div className="mt-4 grid gap-2 sm:grid-cols-[1fr_auto_auto]">
               <input
-                value={userId}
-                onChange={(event) => setUserId(event.target.value)}
-                placeholder="User id"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                type="email"
+                placeholder="name@company.com"
                 className="brutal-input rounded-md px-4 py-2.5"
               />
               <select
@@ -85,6 +109,7 @@ export function WorkspaceMembersPanel({ workspaceSlug }: { workspaceSlug: string
                 Add
               </button>
             </div>
+            {error ? <p className="mt-2 text-xs text-red-700">{error}</p> : null}
           </div>
 
           <div className="surface rounded-[14px] p-5">

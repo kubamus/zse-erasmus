@@ -75,6 +75,7 @@ export function BoardSettingsPanel({
     () => [...columns].sort((a, b) => Number(a.position) - Number(b.position)),
     [columns],
   );
+  const columnOptionsEnabled = boardType === "kanban";
 
   async function saveBoard() {
     if (!board) return;
@@ -122,8 +123,8 @@ export function BoardSettingsPanel({
       body: JSON.stringify({
         name: patch.name ?? column.name,
         position: Number(patch.position ?? column.position),
-        wipLimit: patch.wipLimit ?? column.wipLimit,
-        isDoneColumn: patch.isDoneColumn ?? column.isDoneColumn,
+        wipLimit: columnOptionsEnabled ? (patch.wipLimit ?? column.wipLimit) : null,
+        isDoneColumn: columnOptionsEnabled ? (patch.isDoneColumn ?? column.isDoneColumn) : false,
       }),
     });
     setMessage(response.ok ? "Column updated" : "Could not update column");
@@ -225,38 +226,46 @@ export function BoardSettingsPanel({
                   }}
                   className="brutal-input rounded-md px-3 py-2"
                 />
-                <input
-                  type="number"
-                  value={column.wipLimit ?? ""}
-                  onChange={(event) => {
-                    const value = event.target.value;
-                    setColumns((prev) =>
-                      prev.map((item) =>
-                        item.id === column.id
-                          ? { ...item, wipLimit: value ? Number(value) : null }
-                          : item,
-                      ),
-                    );
-                  }}
-                  placeholder="WIP"
-                  className="brutal-input w-24 rounded-md px-3 py-2"
-                />
-                <label className="sticker flex items-center gap-2 rounded-md bg-[var(--accent-lime)] px-3 py-2 text-xs uppercase tracking-[0.12em]">
-                  <input
-                    type="checkbox"
-                    checked={column.isDoneColumn}
-                    onChange={(event) => {
-                      setColumns((prev) =>
-                        prev.map((item) =>
-                          item.id === column.id
-                            ? { ...item, isDoneColumn: event.target.checked }
-                            : item,
-                        ),
-                      );
-                    }}
-                  />
-                  Done
-                </label>
+                {columnOptionsEnabled ? (
+                  <>
+                    <input
+                      type="number"
+                      value={column.wipLimit ?? ""}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        setColumns((prev) =>
+                          prev.map((item) =>
+                            item.id === column.id
+                              ? { ...item, wipLimit: value ? Number(value) : null }
+                              : item,
+                          ),
+                        );
+                      }}
+                      placeholder="WIP"
+                      className="brutal-input w-24 rounded-md px-3 py-2"
+                    />
+                    <label className="sticker flex items-center gap-2 rounded-md bg-[var(--accent-lime)] px-3 py-2 text-xs uppercase tracking-[0.12em]">
+                      <input
+                        type="checkbox"
+                        checked={column.isDoneColumn}
+                        onChange={(event) => {
+                          setColumns((prev) =>
+                            prev.map((item) =>
+                              item.id === column.id
+                                ? { ...item, isDoneColumn: event.target.checked }
+                                : item,
+                            ),
+                          );
+                        }}
+                      />
+                      Done
+                    </label>
+                  </>
+                ) : (
+                  <p className="sticker rounded-md bg-white px-3 py-2 text-xs uppercase tracking-[0.12em] text-[var(--ink-2)]">
+                    Scrum column
+                  </p>
+                )}
                 <div className="flex gap-1">
                   <button
                     type="button"

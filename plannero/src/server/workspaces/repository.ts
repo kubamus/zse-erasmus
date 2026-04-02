@@ -91,14 +91,14 @@ export async function findWorkspaceMemberWithUser(workspaceId: string, userId: s
   return member ?? null;
 }
 
-export async function userExists(userId: string) {
+export async function findUserByEmail(email: string) {
   const [user] = await db
-    .select({ id: usersTable.id })
+    .select({ id: usersTable.id, email: usersTable.email })
     .from(usersTable)
-    .where(eq(usersTable.id, userId))
+    .where(eq(usersTable.email, email))
     .limit(1);
 
-  return Boolean(user);
+  return user ?? null;
 }
 
 export async function countWorkspaceOwners(workspaceId: string) {

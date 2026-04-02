@@ -142,7 +142,7 @@ paths:
           $ref: "#/components/responses/Forbidden"
     post:
       tags: [Members]
-      summary: Add workspace member
+      summary: Add workspace member by email
       operationId: addWorkspaceMember
       requestBody:
         required: true
@@ -1456,12 +1456,12 @@ components:
     CreateWorkspaceMemberRequest:
       type: object
       properties:
-        userId:
+        email:
           type: string
-          format: uuid
+          format: email
         role:
           $ref: "#/components/schemas/WorkspaceRole"
-      required: [userId, role]
+      required: [email, role]
 
     UpdateWorkspaceMemberRequest:
       type: object

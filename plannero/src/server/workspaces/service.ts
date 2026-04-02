@@ -6,12 +6,12 @@ import { workspaceMembersTable, workspacesTable } from "@/server/db/schema";
 import { toWorkspaceDto, toWorkspaceMemberDto } from "./mappers";
 import {
   countWorkspaceOwners,
+  findUserByEmail,
   findActiveWorkspaceById,
   findMembership,
   findWorkspaceMemberWithUser,
   listVisibleWorkspacesForUser,
   listWorkspaceMembers,
-  userExists,
 } from "./repository";
 import {
   ensureCanArchiveWorkspace,
@@ -155,19 +155,19 @@ export async function listMembersForUser(workspaceId: string, actorUserId: strin
 export async function addMemberForUser(
   workspaceId: string,
   actorUserId: string,
-  input: { userId: string; role: WorkspaceRole },
+  input: { email: string; role: WorkspaceRole },
 ) {
   const { actorRole } = await loadActorContext(workspaceId, actorUserId);
   ensureCanManageMembers(actorRole);
   ensureCanAssignRole(actorRole, input.role);
 
-  const exists = await userExists(input.userId);
+  const targetUser = await findUserByEmail(input.email);
 
-  if (!exists) {
-    throw badRequest("Invalid request data");
+  if (!targetUser) {
+    throw badRequest("User with this email does not exist", "user_not_found");
   }
 
-  const alreadyMember = await findMembership(workspaceId, input.userId);
+  const alreadyMember = await findMembership(workspaceId, targetUser.id);
 
   if (alreadyMember) {
     throw badRequest("User is already a member", "member_exists");
@@ -175,12 +175,12 @@ export async function addMemberForUser(
 
   await db.insert(workspaceMembersTable).values({
     workspaceId,
-    userId: input.userId,
+    userId: targetUser.id,
     role: input.role,
     joinedAt: new Date(),
   });
 
-  const member = await findWorkspaceMemberWithUser(workspaceId, input.userId);
+  const member = await findWorkspaceMemberWithUser(workspaceId, targetUser.id);
 
   if (!member) {
     throw notFound("Resource not found");
