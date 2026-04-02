@@ -13,7 +13,7 @@ export const sessionsTable = mysqlTable(
   "session",
   {
     id: varchar("id", { length: 36 }).primaryKey(),
-    expiresAt: datetime("expires_at", { fsp: 3 }).notNull(),
+    expiresAt: timestamp("expires_at", { fsp: 3 }).notNull(),
     token: varchar("token", { length: 255 }).notNull().unique(),
     createdAt: timestamp("created_at", { fsp: 3 }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { fsp: 3 })

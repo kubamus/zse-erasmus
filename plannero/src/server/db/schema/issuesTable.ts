@@ -44,7 +44,7 @@ export const issuesTable = mysqlTable(
     reporterId: varchar("reporter_id", { length: 36 })
       .notNull()
       .references(() => usersTable.id, { onDelete: "restrict" }),
-    dueDate: datetime("due_date", { fsp: 3 }),
+    dueDate: timestamp("due_date", { fsp: 3 }),
     estimatePoints: decimal("estimate_points", { precision: 10, scale: 2 }),
     position: decimal("position", { precision: 20, scale: 6 }).notNull(),
     createdAt: timestamp("created_at", { fsp: 3 }).defaultNow().notNull(),
@@ -52,7 +52,7 @@ export const issuesTable = mysqlTable(
       .defaultNow()
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
-    deletedAt: datetime("deleted_at", { fsp: 3 }),
+    deletedAt: timestamp("deleted_at", { fsp: 3 }),
   },
   (table) => [
     uniqueIndex("issue_projectId_issueNumber_unique").on(
